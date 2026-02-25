@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Screen Mockup</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      background: #02040A;
+      color: #F9FAFB;
+      padding: 0;
+      min-height: 100vh;
+    }
+
+    /* Mock mobile container */
+    .phone-frame {
+      max-width: 390px;
+      margin: 20px auto;
+      background: #02040A;
+      border-radius: 40px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      border: 8px solid #1a1a1a;
+    }
+
+    .status-bar {
+      height: 44px;
+      background: #02040A;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .time { color: #F9FAFB; }
+    .indicators { 
+      color: #F9FAFB;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .screen {
+      background: #02040A;
+      height: 750px;
+      overflow-y: auto;
+    }
+
+    .content {
+      padding: 16px;
+      padding-bottom: 80px;
+    }
+
+    .page-title {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 24px;
+    }
+
+    .section-header {
+      margin-bottom: 16px;
+      margin-top: 32px;
+    }
+
+    .section-header:first-of-type {
+      margin-top: 0;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+    }
+
+    .section-subtitle {
+      font-size: 14px;
+      color: #6B7280;
+    }
+
+    .input-group {
+      margin-bottom: 16px;
+    }
+
+    .input-label {
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #6B7280;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .input-container {
+      display: flex;
+      align-items: center;
+      background: #070C16;
+      border: 1px solid #111827;
+      border-radius: 6px;
+      min-height: 44px;
+      padding: 0 12px;
+    }
+
+    .input-prefix {
+      font-size: 14px;
+      color: #9CA3AF;
+      margin-right: 4px;
+    }
+
+    .input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #F9FAFB;
+      font-size: 14px;
+      padding: 12px 0;
+      outline: none;
+    }
+
+    .helper-text {
+      font-size: 11px;
+      color: #6B7280;
+      margin-top: 4px;
+    }
+
+    .total-card {
+      background: #050812;
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid #111827;
+      margin-bottom: 16px;
+    }
+
+    .total-label {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #6B7280;
+      margin-bottom: 4px;
+    }
+
+    .total-value {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      color: #F9FAFB;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .metric-card {
+      background: #070C16;
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid #111827;
+    }
+
+    .metric-label {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #6B7280;
+      margin-bottom: 4px;
+    }
+
+    .metric-value {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      color: #F9FAFB;
+      margin-bottom: 4px;
+    }
+
+    .metric-positive { color: #22C55E; }
+    .metric-excellent { color: #1b5e20; }
+    .metric-good { color: #4caf50; }
+    .metric-warning { color: #fff59d; }
+
+    .upgrade-section {
+      margin-top: 32px;
+      padding: 24px;
+      background: #070C16;
+      border-radius: 12px;
+      border: 1px solid #F97316;
+      text-align: center;
+    }
+
+    .upgrade-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .upgrade-text {
+      font-size: 14px;
+      color: #9CA3AF;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .upgrade-button {
+      width: 100%;
+      padding: 12px 16px;
+      background: #F97316;
+      border: none;
+      border-radius: 6px;
+      color: #02040A;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      min-height: 44px;
+    }
+
+    .upgrade-button:active {
+      opacity: 0.7;
+    }
+
+    /* Bottom tab bar */
+    .tab-bar {
+      display: flex;
+      background: #070C16;
+      border-top: 1px solid #111827;
+      padding: 8px 0;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-width: 390px;
+      margin: 0 auto;
+    }
+
+    .tab {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 8px;
+      color: #6B7280;
+      font-size: 10px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tab.active {
+      color: #F97316;
+    }
+
+    .divider {
+      height: 1px;
+      background: #111827;
+      margin: 24px 0;
+    }
+
+    /* Scroll indicator */
+    .scroll-hint {
+      text-align: center;
+      padding: 12px;
+      color: #6B7280;
+      font-size: 12px;
+      position: sticky;
+      bottom: 60px;
+      background: linear-gradient(transparent, #02040A 30%);
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-frame">
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <div class="time">9:41</div>
+      <div class="indicators">
+        <span>📶</span>
+        <span>📱</span>
+        <span>🔋</span>
+      </div>
+    </div>
+
+    <!-- Main Screen -->
+    <div class="screen">
+      <div class="content">
+        <h1 class="page-title">My First Machine</h1>
+
+        <!-- Initial Investment Section -->
+        <div class="section-header">
+          <div class="section-title">Initial Investment</div>
+          <div class="section-subtitle">One-time costs to get started</div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">Machine Purchase Cost</label>
+          <div class="input-container">
+            <span class="input-prefix">$</span>
+            <input type="text" class="input" value="5,000" />
+          </div>
+          <div class="helper-text">Typical range: $2,000-8,000</div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">Installation/Delivery</label>
+          <div class="input-container">
+            <span class="input-prefix">$</span>
+            <input type="text" class="input" value="750" />
+          </div>
+          <div class="helper-text">Usually 10-20% of machine cost</div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">Initial Inventory</label>
+          <div class="input-container">
+            <span class="input-prefix">$</span>
+            <input type="text" class="input" value="600" />
+          </div>
+          <div class="helper-text">Estimate 2x monthly sales</div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">Licenses & Permits</label>
+          <div class="input-container">
+            <span class="input-prefix">$</span>
+            <input type="text" class="input" value="350" />
+          </div>
+          <div class="helper-text">Varies by location</div>
+        </div>
+
+        <div class="total-card">
+          <div class="total-label">Total Initial Investment</div>
+          <div class="total-value">$6,700</div>
+        </div>
+
+        <!-- Monthly Operating Costs Section -->
+        <div class="section-header">
+          <div class="section-title">Monthly Operating Costs</div>
+          <div class="section-subtitle">Regular expenses to keep running</div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">Product Inventory Restock</label>
+          <div class="input-container">
+            <span class="input-prefix">$</span>
+            <input type="text" class="input" value="840" />
+          </div>
+          <div class="helper-text">Typically 60-70% of revenue</div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">Transportation/Fuel</label>
+          <div class="input-container">
+            <span class="input-prefix">$</span>
+            <input type="text" class="input" value="120" />
+          </div>
+          <div class="helper-text">Track mileage for tax purposes</div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">Machine Maintenance</label>
+          <div class="input-container">
+            <span class="input-prefix">$</span>
+            <input type="text" class="input" value="80" />
+          </div>
+          <div class="helper-text">Include cleaning supplies</div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">Location Rent/Fees</label>
+          <div class="input-container">
+            <span class="input-prefix">$</span>
+            <input type="text" class="input" value="200" />
+          </div>
+          <div class="helper-text">Negotiate annual contracts</div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">Credit Card Processing Fees</label>
+          <div class="input-container">
+            <span class="input-prefix">$</span>
+            <input type="text" class="input" value="35" />
+          </div>
+          <div class="helper-text">Usually 2.5-3% of card sales</div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">Other Expenses</label>
+          <div class="input-container">
+            <span class="input-prefix">$</span>
+            <input type="text" class="input" value="50" />
+          </div>
+        </div>
+
+        <div class="total-card">
+          <div class="total-label">Total Monthly Costs</div>
+          <div class="total-value">$1,325</div>
+        </div>
+
+        <!-- Monthly Revenue Section -->
+        <div class="section-header">
+          <div class="section-title">Monthly Revenue Projections</div>
+          <div class="section-subtitle">Expected income per month</div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">Average Items Sold Per Day</label>
+          <div class="input-container">
+            <input type="text" class="input" value="20" />
+          </div>
+          <div class="helper-text">Start conservative: 15-25 items</div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">Average Sale Price</label>
+          <div class="input-container">
+            <span class="input-prefix">$</span>
+            <input type="text" class="input" value="2.00" />
+          </div>
+          <div class="helper-text">Common range: $1.50-3.00</div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">Days Operating Per Month</label>
+          <div class="input-container">
+            <input type="text" class="input" value="30" />
+          </div>
+          <div class="helper-text">Adjust for holidays/maintenance</div>
+        </div>
+
+        <div class="total-card">
+          <div class="total-label">Total Monthly Revenue</div>
+          <div class="total-value">$1,200</div>
+        </div>
+
+        <!-- Profitability Metrics Section -->
+        <div class="section-header">
+          <div class="section-title">Profitability Metrics</div>
+          <div class="section-subtitle">Your bottom line</div>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-label">Monthly Net Profit</div>
+            <div class="metric-value metric-positive">$875</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">Annual Net Profit</div>
+            <div class="metric-value metric-positive">$10,500</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">ROI Percentage</div>
+            <div class="metric-value metric-excellent">156.7%</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">Break-even Point</div>
+            <div class="metric-value">7.7 mo</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">Profit Margin</div>
+            <div class="metric-value metric-positive">72.9%</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">Monthly Cash Flow</div>
+            <div class="metric-value metric-positive">$875</div>
+          </div>
+        </div>
+
+        <!-- Upgrade Section -->
+        <div class="upgrade-section">
+          <div class="upgrade-title">Want to optimize further?</div>
+          <div class="upgrade-text">
+            Unlock Location Comparison, Product Mix Optimizer, and Growth Projector
+          </div>
+          <button class="upgrade-button">Unlock Premium - $19.99</button>
+        </div>
+      </div>
+
+      <!-- Tab Bar -->
+      <div class="tab-bar">
+        <div class="tab active">
+          <div>📊</div>
+          <div>Dashboard</div>
+        </div>
+        <div class="tab">
+          <div>📍</div>
+          <div>Locations</div>
+        </div>
+        <div class="tab">
+          <div>🛒</div>
+          <div>Products</div>
+        </div>
+        <div class="tab">
+          <div>📈</div>
+          <div>Growth</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

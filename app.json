@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "Vending ROI Calculator",
+    "slug": "vending-roi-calculator",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#02040A"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.dahvio.vendROI",
+      "buildNumber": "1"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#02040A"
+      },
+      "package": "com.vendingroi.calculator",
+      "versionCode": 1
+    },
+    "platforms": ["ios", "android"],
+    "assetBundlePatterns": ["**/*"]
+  }
+}

@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Location Comparison Screen Mockup</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      background: #02040A;
+      color: #F9FAFB;
+      padding: 0;
+      min-height: 100vh;
+    }
+
+    /* Mock mobile container */
+    .phone-frame {
+      max-width: 390px;
+      margin: 20px auto;
+      background: #02040A;
+      border-radius: 40px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      border: 8px solid #1a1a1a;
+    }
+
+    .status-bar {
+      height: 44px;
+      background: #02040A;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .time { color: #F9FAFB; }
+    .indicators { 
+      color: #F9FAFB;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .screen {
+      background: #02040A;
+      height: 750px;
+      overflow-y: auto;
+    }
+
+    .header {
+      padding: 16px;
+      border-bottom: 1px solid #111827;
+      background: #02040A;
+    }
+
+    .header-title {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+    }
+
+    .header-subtitle {
+      font-size: 14px;
+      color: #6B7280;
+    }
+
+    .content {
+      padding: 16px;
+    }
+
+    .location-card {
+      background: #070C16;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      border: 1px solid #111827;
+    }
+
+    .location-header {
+      margin-bottom: 12px;
+    }
+
+    .location-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .location-name {
+      font-size: 16px;
+      font-weight: 600;
+      flex: 1;
+    }
+
+    .score-badge {
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 14px;
+      color: #02040A;
+    }
+
+    .score-high { background: #22C55E; }
+    .score-medium { background: #6366F1; }
+    .score-low { background: #FB7185; }
+
+    .location-type {
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #6B7280;
+    }
+
+    .metrics-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .metric-item {
+      flex: 1;
+    }
+
+    .metric-label {
+      font-size: 10px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #6B7280;
+      margin-bottom: 4px;
+    }
+
+    .metric-value {
+      font-size: 16px;
+      font-weight: 600;
+      color: #F9FAFB;
+    }
+
+    .metric-profit { color: #22C55E; }
+
+    .details-row {
+      display: flex;
+      justify-content: space-between;
+      padding-top: 12px;
+      border-top: 1px solid #111827;
+    }
+
+    .detail-text {
+      font-size: 12px;
+      color: #9CA3AF;
+    }
+
+    .delete-button {
+      margin-top: 12px;
+      display: inline-block;
+      color: #FB7185;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .add-button {
+      width: 100%;
+      padding: 12px 16px;
+      background: #070C16;
+      border: 1px solid #111827;
+      border-radius: 6px;
+      color: #F9FAFB;
+      font-size: 15px;
+      font-weight: 600;
+      margin-top: 16px;
+      cursor: pointer;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .add-button:active {
+      opacity: 0.7;
+    }
+
+    .rank-badge {
+      position: absolute;
+      top: -8px;
+      left: -8px;
+      width: 28px;
+      height: 28px;
+      background: #F97316;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: #02040A;
+      border: 2px solid #02040A;
+    }
+
+    .location-card {
+      position: relative;
+    }
+
+    /* Bottom tab bar */
+    .tab-bar {
+      display: flex;
+      background: #070C16;
+      border-top: 1px solid #111827;
+      padding: 8px 0;
+      position: sticky;
+      bottom: 0;
+    }
+
+    .tab {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 8px;
+      color: #6B7280;
+      font-size: 10px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tab.active {
+      color: #F97316;
+    }
+
+    .tab-icon {
+      width: 24px;
+      height: 24px;
+      background: currentColor;
+      mask-size: contain;
+      -webkit-mask-size: contain;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 24px;
+    }
+
+    .empty-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .empty-text {
+      font-size: 14px;
+      color: #9CA3AF;
+      margin-bottom: 32px;
+    }
+
+    .primary-button {
+      width: 100%;
+      padding: 12px 16px;
+      background: #F97316;
+      border: none;
+      border-radius: 6px;
+      color: #02040A;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      min-height: 44px;
+    }
+
+    .primary-button:active {
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-frame">
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <div class="time">9:41</div>
+      <div class="indicators">
+        <span>📶</span>
+        <span>📱</span>
+        <span>🔋</span>
+      </div>
+    </div>
+
+    <!-- Main Screen -->
+    <div class="screen">
+      <!-- Header -->
+      <div class="header">
+        <div class="header-title">Location Comparison</div>
+        <div class="header-subtitle">3/10 locations</div>
+      </div>
+
+      <!-- Content -->
+      <div class="content">
+        <!-- Location Card #1 - Best Score -->
+        <div class="location-card">
+          <div class="rank-badge">1</div>
+          <div class="location-header">
+            <div class="location-title-row">
+              <div class="location-name">Downtown Tech Hub</div>
+              <div class="score-badge score-high">87</div>
+            </div>
+            <div class="location-type">OFFICE</div>
+          </div>
+
+          <div class="metrics-row">
+            <div class="metric-item">
+              <div class="metric-label">ROI</div>
+              <div class="metric-value metric-profit">64.2%</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-label">MONTHLY PROFIT</div>
+              <div class="metric-value">$2,450</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-label">FOOT TRAFFIC</div>
+              <div class="metric-value">1,200/day</div>
+            </div>
+          </div>
+
+          <div class="details-row">
+            <div class="detail-text">Rent: $800</div>
+            <div class="detail-text">Competition: Low</div>
+          </div>
+
+          <div class="delete-button">Delete</div>
+        </div>
+
+        <!-- Location Card #2 - Medium Score -->
+        <div class="location-card">
+          <div class="rank-badge">2</div>
+          <div class="location-header">
+            <div class="location-title-row">
+              <div class="location-name">University Student Center</div>
+              <div class="score-badge score-medium">71</div>
+            </div>
+            <div class="location-type">SCHOOL</div>
+          </div>
+
+          <div class="metrics-row">
+            <div class="metric-item">
+              <div class="metric-label">ROI</div>
+              <div class="metric-value metric-profit">48.5%</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-label">MONTHLY PROFIT</div>
+              <div class="metric-value">$1,850</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-label">FOOT TRAFFIC</div>
+              <div class="metric-value">850/day</div>
+            </div>
+          </div>
+
+          <div class="details-row">
+            <div class="detail-text">Rent: $600</div>
+            <div class="detail-text">Competition: Medium</div>
+          </div>
+
+          <div class="delete-button">Delete</div>
+        </div>
+
+        <!-- Location Card #3 - Lower Score -->
+        <div class="location-card">
+          <div class="rank-badge">3</div>
+          <div class="location-header">
+            <div class="location-title-row">
+              <div class="location-name">Retail Plaza West End</div>
+              <div class="score-badge score-low">54</div>
+            </div>
+            <div class="location-type">RETAIL</div>
+          </div>
+
+          <div class="metrics-row">
+            <div class="metric-item">
+              <div class="metric-label">ROI</div>
+              <div class="metric-value metric-profit">28.3%</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-label">MONTHLY PROFIT</div>
+              <div class="metric-value">$980</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-label">FOOT TRAFFIC</div>
+              <div class="metric-value">420/day</div>
+            </div>
+          </div>
+
+          <div class="details-row">
+            <div class="detail-text">Rent: $1,200</div>
+            <div class="detail-text">Competition: High</div>
+          </div>
+
+          <div class="delete-button">Delete</div>
+        </div>
+
+        <!-- Add Button -->
+        <button class="add-button">Add Another Location</button>
+      </div>
+
+      <!-- Tab Bar -->
+      <div class="tab-bar">
+        <div class="tab">
+          <div class="tab-icon">📊</div>
+          <div>Dashboard</div>
+        </div>
+        <div class="tab active">
+          <div class="tab-icon">📍</div>
+          <div>Locations</div>
+        </div>
+        <div class="tab">
+          <div class="tab-icon">🛒</div>
+          <div>Products</div>
+        </div>
+        <div class="tab">
+          <div class="tab-icon">📈</div>
+          <div>Growth</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

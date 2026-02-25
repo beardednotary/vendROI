@@ -1,0 +1,1009 @@
+// src/screens/DashboardScreen.tsx
+
+import React, { useRef, useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  Alert,
+  TouchableOpacity,
+  TextInput,
+} from 'react-native';
+import { useAppStore } from '../store/useAppStore';
+import { Input } from '../components/Input';
+import { Button } from '../components/Button';
+import { colors, spacing, textVariants, radii } from '../theme/theme';
+import {
+  formatCurrency,
+  formatPercent,
+  getProfitColor,
+  getROIColor,
+} from '../utils/calculations';
+import { PortfolioTicker } from '../components/PortfolioTicker';
+import { PaywallScreen } from './PaywallScreen';
+import { exportDashboardToCSV, exportDashboardToPDF } from '../utils/export';
+import { Toast } from '../utils/toast';
+
+export const DashboardScreen: React.FC = () => {
+  const { dashboards, addDashboard, updateDashboard, isPremium } = useAppStore();
+  const [showPaywall, setShowPaywall] = useState(false);
+  const currentDashboard = dashboards[0];
+  
+  const [name, setName] = useState('My First Machine');
+  const [isEditingName, setIsEditingName] = useState(false);
+  
+  const scrollRef = useRef<ScrollView | null>(null);
+  const [sectionPositions, setSectionPositions] = useState<{
+    investment?: number;
+    costs?: number;
+    revenue?: number;
+    metrics?: number;
+  }>({});
+
+  // ---------------- INPUT STATE (STRINGS) ----------------
+
+  const [initialInvestment, setInitialInvestment] = useState({
+    machineCost: '0',
+    installationDelivery: '0',
+    initialInventory: '0',
+    licensesPermits: '0',
+  });
+
+  const [operatingCosts, setOperatingCosts] = useState({
+    productRestock: '0',
+    transportationFuel: '0',
+    maintenance: '0',
+    locationRent: '0',
+    creditCardFees: '0',
+    otherExpenses: '0',
+  });
+
+  const [revenue, setRevenue] = useState({
+    itemsSoldPerDay: '0',
+    averageSalePrice: '0',
+    daysOperatingPerMonth: '30',
+  });
+
+  // Clear "0" on focus so the user doesn’t have to delete it
+  const onFocusClearZero =
+    (value: string, setValue: (v: string) => void) => () => {
+      if (value === '0') setValue('');
+    };
+
+  // ---------------- NUMERIC VALUES & METRICS ----------------
+
+  const num = {
+    machineCost: parseFloat(initialInvestment.machineCost) || 0,
+    installationDelivery: parseFloat(initialInvestment.installationDelivery) || 0,
+    initialInventory: parseFloat(initialInvestment.initialInventory) || 0,
+    licensesPermits: parseFloat(initialInvestment.licensesPermits) || 0,
+
+    productRestock: parseFloat(operatingCosts.productRestock) || 0,
+    transportationFuel: parseFloat(operatingCosts.transportationFuel) || 0,
+    maintenance: parseFloat(operatingCosts.maintenance) || 0,
+    locationRent: parseFloat(operatingCosts.locationRent) || 0,
+    creditCardFees: parseFloat(operatingCosts.creditCardFees) || 0,
+    otherExpenses: parseFloat(operatingCosts.otherExpenses) || 0,
+
+    itemsSoldPerDay: parseFloat(revenue.itemsSoldPerDay) || 0,
+    averageSalePrice: parseFloat(revenue.averageSalePrice) || 0,
+    daysOperatingPerMonth: parseFloat(revenue.daysOperatingPerMonth) || 0,
+  };
+
+  const totalInitialInvestment =
+    num.machineCost +
+    num.installationDelivery +
+    num.initialInventory +
+    num.licensesPermits;
+
+  const totalMonthlyCosts =
+    num.productRestock +
+    num.transportationFuel +
+    num.maintenance +
+    num.locationRent +
+    num.creditCardFees +
+    num.otherExpenses;
+
+  const totalMonthlyRevenue =
+    num.itemsSoldPerDay * num.averageSalePrice * num.daysOperatingPerMonth;
+
+  const monthlyNetProfit = totalMonthlyRevenue - totalMonthlyCosts;
+  const annualNetProfit = monthlyNetProfit * 12;
+
+  // Save to store when values change
+useEffect(() => {
+  if (!currentDashboard) return;
+  
+  const timeout = setTimeout(() => {
+    updateDashboard(currentDashboard.id, {
+      initialInvestment: {
+        machineCost: parseFloat(initialInvestment.machineCost) || 0,
+        installationDelivery: parseFloat(initialInvestment.installationDelivery) || 0,
+        initialInventory: parseFloat(initialInvestment.initialInventory) || 0,
+        licensesPermits: parseFloat(initialInvestment.licensesPermits) || 0,
+      },
+      operatingCosts: {
+        productRestock: parseFloat(operatingCosts.productRestock) || 0,
+        transportationFuel: parseFloat(operatingCosts.transportationFuel) || 0,
+        maintenance: parseFloat(operatingCosts.maintenance) || 0,
+        locationRent: parseFloat(operatingCosts.locationRent) || 0,
+        creditCardFees: parseFloat(operatingCosts.creditCardFees) || 0,
+        otherExpenses: parseFloat(operatingCosts.otherExpenses) || 0,
+      },
+      revenue: {
+        itemsSoldPerDay: parseFloat(revenue.itemsSoldPerDay) || 0,
+        averageSalePrice: parseFloat(revenue.averageSalePrice) || 0,
+        daysOperatingPerMonth: parseFloat(revenue.daysOperatingPerMonth) || 30,
+      },
+    });
+  }, 1000);
+  
+  return () => clearTimeout(timeout);
+}, [initialInvestment, operatingCosts, revenue]);
+
+  const roiPercentage =
+    totalInitialInvestment > 0
+      ? (annualNetProfit / totalInitialInvestment) * 100
+      : 0;
+
+  const breakEvenMonths =
+    monthlyNetProfit > 0
+      ? totalInitialInvestment / monthlyNetProfit
+      : 0;
+  
+  const getBreakEvenMessage = (months: number) => {
+  if (months === 0 || months > 100) return '⚠️ Not profitable';
+  if (months > 24) return '⚠️ Too long to break even';
+  if (months <= 12) return '🚀 Fast payback period';
+  return '✓ Standard timeline';
+};
+
+const getBreakEvenColor = (months: number) => {
+  if (months === 0 || months > 24) return colors.accentRisk;
+  if (months <= 12) return colors.accentProfit;
+  return colors.textSecondary;
+};    
+
+  const profitMargin =
+    totalMonthlyRevenue > 0
+      ? (monthlyNetProfit / totalMonthlyRevenue) * 100
+      : 0;
+
+  const monthlyCashFlow = monthlyNetProfit;
+
+  // Investment verdict
+  const getVerdict = () => {
+    if (totalInitialInvestment === 0) return { label: 'Enter Your Numbers', emoji: '📊', color: colors.muted, message: 'Fill in your investment details above' };
+    if (monthlyNetProfit <= 0) return { label: 'HIGH RISK', emoji: '🚨', color: colors.accentRisk, message: 'This investment is not currently profitable' };
+    if (breakEvenMonths > 24) return { label: 'CAUTION', emoji: '⚠️', color: colors.accentRisk, message: `Break-even exceeds 2 years` };
+    if (roiPercentage >= 50 && breakEvenMonths <= 12) return { label: 'STRONG INVESTMENT', emoji: '🔥', color: colors.accentProfit, message: `High ROI with fast ${breakEvenMonths.toFixed(0)}-month payback` };
+    if (roiPercentage >= 25) return { label: 'SOLID INVESTMENT', emoji: '✅', color: colors.accentProfit, message: 'Good returns with manageable timeline' };
+    return { label: 'MODERATE', emoji: '📊', color: colors.accentPrimary, message: 'Viable but watch your margins closely' };
+  };
+
+  const verdict = getVerdict();
+
+  // Payback date
+  const getPaybackDate = () => {
+    if (breakEvenMonths <= 0 || breakEvenMonths > 100) return null;
+    const now = new Date();
+    const paybackDate = new Date(now.getFullYear(), now.getMonth() + Math.ceil(breakEvenMonths), 1);
+    return paybackDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  };
+
+  const paybackDate = getPaybackDate();
+
+  // ---------------- METRIC CARD ----------------
+
+  const MetricBox = ({
+    label,
+    value,
+    valueColor,
+    highlight,
+    style,
+  }: {
+    label: string;
+    value: string;
+    valueColor?: string;
+    highlight?: boolean;
+    style?: any;
+  }) => (
+    <View
+      style={[
+        styles.metricBox,
+        highlight && styles.metricBoxHighlight,
+        style,
+      ]}
+    >
+      <Text style={styles.metricLabel}>{label}</Text>
+      <Text
+        style={[
+          styles.metricValue,
+          valueColor ? { color: valueColor } : null,
+        ]}
+      >
+        {value}
+      </Text>
+    </View>
+  );
+
+  // ---------------- FLOW HELPERS ----------------
+
+  const scrollToSection = (key: keyof typeof sectionPositions) => {
+    const y = sectionPositions[key];
+    if (y != null && scrollRef.current) {
+      scrollRef.current.scrollTo({ y, animated: true });
+    }
+  };
+
+  // ---------------- RENDER ----------------
+
+  if (showPaywall) {
+    return (
+      <PaywallScreen
+        onDismiss={() => setShowPaywall(false)}
+        onPurchaseSuccess={() => setShowPaywall(false)}
+      />
+    );
+  }
+
+  return (
+    <ScrollView
+      ref={scrollRef}
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      keyboardShouldPersistTaps="handled"
+      keyboardDismissMode="on-drag"
+    >
+{isEditingName ? (
+  <TextInput
+    value={name}
+    onChangeText={setName}
+    onBlur={() => setIsEditingName(false)}
+    autoFocus
+    style={styles.projectNameInput}
+    placeholder="Project name"
+    placeholderTextColor={colors.muted}
+  />
+) : (
+  <TouchableOpacity onPress={() => setIsEditingName(true)}>
+    <View style={styles.projectNameContainer}>
+      <Text style={styles.header}>{name}</Text>
+      <Text style={styles.editIcon}>✏️</Text>
+    </View>
+  </TouchableOpacity>
+)}
+    <PortfolioTicker
+  totalInvestment={totalInitialInvestment}
+  totalRevenue={totalMonthlyRevenue * 12}
+  roi={roiPercentage}
+  monthlyNetProfit={monthlyNetProfit}
+  breakEvenMonths={breakEvenMonths}
+  profitMargin={profitMargin}
+/>
+
+<View style={styles.exportButtons}>
+  <Button
+    title="Export PDF"
+    onPress={async () => {
+      if (!currentDashboard) return;
+      try {
+        const metrics = {
+          totalInitialInvestment,
+          totalMonthlyCosts,
+          totalMonthlyRevenue,
+          monthlyNetProfit,
+          annualNetProfit,
+          roiPercentage,
+          breakEvenMonths,
+          profitMargin,
+          monthlyCashFlow,
+        };
+        await exportDashboardToPDF(currentDashboard, metrics);
+        Toast.show({
+          type: 'success',
+          text1: 'PDF Ready',
+          text2: 'Report generated successfully',
+        });
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Could not generate PDF';
+        Toast.show({
+          type: 'error',
+          text1: 'Export Failed',
+          text2: message,
+        });
+      }
+    }}
+    variant="secondary"
+    style={styles.exportButton}
+  />
+  
+  <Button
+    title="Export CSV"
+    onPress={async () => {
+      if (!currentDashboard) return;
+      try {
+        const metrics = {
+          totalInitialInvestment,
+          totalMonthlyCosts,
+          totalMonthlyRevenue,
+          monthlyNetProfit,
+          annualNetProfit,
+          roiPercentage,
+          breakEvenMonths,
+          profitMargin,
+          monthlyCashFlow,
+        };
+        await exportDashboardToCSV(currentDashboard, metrics);
+        Toast.show({
+          type: 'success',
+          text1: 'CSV Ready',
+          text2: 'Data exported successfully',
+        });
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Could not generate CSV';
+        Toast.show({
+          type: 'error',
+          text1: 'Export Failed',
+          text2: message,
+        });
+      }
+    }}
+    variant="secondary"
+    style={styles.exportButton}
+  />
+</View>
+
+      {/* STEP 1: INITIAL INVESTMENT */}
+      <View
+        style={styles.section}
+        onLayout={event => {
+          const y = event.nativeEvent.layout.y;
+          setSectionPositions(prev => ({
+            ...prev,
+            investment: y,
+          }));
+        }}
+      >
+        <View style={styles.sectionHeaderRow}>
+          <Text style={styles.sectionTitle}>Initial Investment</Text>
+          <View style={styles.stepPill}>
+            <Text style={styles.stepPillText}>Step 1 of 3</Text>
+          </View>
+        </View>
+        <Text style={styles.sectionSubtitle}>
+          One-time costs to get started
+        </Text>
+
+        <Input
+          label="Machine Purchase Cost"
+          value={initialInvestment.machineCost}
+          onChangeText={value =>
+            setInitialInvestment(prev => ({ ...prev, machineCost: value }))
+          }
+          onFocus={onFocusClearZero(
+            initialInvestment.machineCost,
+            v => setInitialInvestment(prev => ({ ...prev, machineCost: v })),
+          )}
+          keyboardType="numeric"
+          prefix="$"
+          helperText="Typical range: $2,000-8,000"
+        />
+
+        <Input
+          label="Installation/Delivery"
+          value={initialInvestment.installationDelivery}
+          onChangeText={value =>
+            setInitialInvestment(prev => ({
+              ...prev,
+              installationDelivery: value,
+            }))
+          }
+          onFocus={onFocusClearZero(
+            initialInvestment.installationDelivery,
+            v =>
+              setInitialInvestment(prev => ({
+                ...prev,
+                installationDelivery: v,
+              })),
+          )}
+          keyboardType="numeric"
+          prefix="$"
+          helperText="Usually 10-20% of machine cost"
+        />
+
+        <Input
+          label="Initial Inventory"
+          value={initialInvestment.initialInventory}
+          onChangeText={value =>
+            setInitialInvestment(prev => ({
+              ...prev,
+              initialInventory: value,
+            }))
+          }
+          onFocus={onFocusClearZero(
+            initialInvestment.initialInventory,
+            v =>
+              setInitialInvestment(prev => ({
+                ...prev,
+                initialInventory: v,
+              })),
+          )}
+          keyboardType="numeric"
+          prefix="$"
+          helperText="Estimate 2x monthly sales"
+        />
+
+        <Input
+          label="Licenses & Permits"
+          value={initialInvestment.licensesPermits}
+          onChangeText={value =>
+            setInitialInvestment(prev => ({
+              ...prev,
+              licensesPermits: value,
+            }))
+          }
+          onFocus={onFocusClearZero(
+            initialInvestment.licensesPermits,
+            v =>
+              setInitialInvestment(prev => ({
+                ...prev,
+                licensesPermits: v,
+              })),
+          )}
+          keyboardType="numeric"
+          prefix="$"
+          helperText="Varies by location"
+        />
+
+        <View style={styles.totalCard}>
+          <Text style={styles.totalLabel}>Total Initial Investment</Text>
+          <Text style={styles.totalValue}>
+            {formatCurrency(totalInitialInvestment)}
+          </Text>
+        </View>
+
+        <Button
+          title="Continue to Monthly Costs"
+          onPress={() => scrollToSection('costs')}
+          style={styles.flowButton}
+        />
+      </View>
+
+      {/* STEP 2: OPERATING COSTS */}
+      <View
+        style={styles.section}
+        onLayout={event => {
+          const y = event.nativeEvent.layout.y;
+          setSectionPositions(prev => ({
+            ...prev,
+            costs: y,
+          }));
+        }}
+      >
+        <View style={styles.sectionHeaderRow}>
+          <Text style={styles.sectionTitle}>Monthly Operating Costs</Text>
+          <View style={styles.stepPill}>
+            <Text style={styles.stepPillText}>Step 2 of 3</Text>
+          </View>
+        </View>
+        <Text style={styles.sectionSubtitle}>
+          Regular expenses to keep running
+        </Text>
+
+        <Input
+          label="Product Inventory Restock"
+          value={operatingCosts.productRestock}
+          onChangeText={value =>
+            setOperatingCosts(prev => ({
+              ...prev,
+              productRestock: value,
+            }))
+          }
+          onFocus={onFocusClearZero(
+            operatingCosts.productRestock,
+            v =>
+              setOperatingCosts(prev => ({
+                ...prev,
+                productRestock: v,
+              })),
+          )}
+          keyboardType="numeric"
+          prefix="$"
+          helperText="Typically 30-40% of revenue"
+        />
+
+        <Input
+          label="Transportation/Fuel"
+          value={operatingCosts.transportationFuel}
+          onChangeText={value =>
+            setOperatingCosts(prev => ({
+              ...prev,
+              transportationFuel: value,
+            }))
+          }
+          onFocus={onFocusClearZero(
+            operatingCosts.transportationFuel,
+            v =>
+              setOperatingCosts(prev => ({
+                ...prev,
+                transportationFuel: v,
+              })),
+          )}
+          keyboardType="numeric"
+          prefix="$"
+          helperText="Track mileage for tax purposes"
+        />
+
+        <Input
+          label="Machine Maintenance"
+          value={operatingCosts.maintenance}
+          onChangeText={value =>
+            setOperatingCosts(prev => ({
+              ...prev,
+              maintenance: value,
+            }))
+          }
+          onFocus={onFocusClearZero(
+            operatingCosts.maintenance,
+            v =>
+              setOperatingCosts(prev => ({
+                ...prev,
+                maintenance: v,
+              })),
+          )}
+          keyboardType="numeric"
+          prefix="$"
+          helperText="Include cleaning supplies"
+        />
+
+        <Input
+          label="Location Rent/Fees"
+          value={operatingCosts.locationRent}
+          onChangeText={value =>
+            setOperatingCosts(prev => ({
+              ...prev,
+              locationRent: value,
+            }))
+          }
+          onFocus={onFocusClearZero(
+            operatingCosts.locationRent,
+            v =>
+              setOperatingCosts(prev => ({
+                ...prev,
+                locationRent: v,
+              })),
+          )}
+          keyboardType="numeric"
+          prefix="$"
+          helperText="Negotiate annual contracts"
+        />
+
+        <Input
+          label="Credit Card Processing Fees"
+          value={operatingCosts.creditCardFees}
+          onChangeText={value =>
+            setOperatingCosts(prev => ({
+              ...prev,
+              creditCardFees: value,
+            }))
+          }
+          onFocus={onFocusClearZero(
+            operatingCosts.creditCardFees,
+            v =>
+              setOperatingCosts(prev => ({
+                ...prev,
+                creditCardFees: v,
+              })),
+          )}
+          keyboardType="numeric"
+          prefix="$"
+          helperText="Usually 2.5–3% of card sales"
+        />
+
+        <Input
+          label="Other Expenses"
+          value={operatingCosts.otherExpenses}
+          onChangeText={value =>
+            setOperatingCosts(prev => ({
+              ...prev,
+              otherExpenses: value,
+            }))
+          }
+          onFocus={onFocusClearZero(
+            operatingCosts.otherExpenses,
+            v =>
+              setOperatingCosts(prev => ({
+                ...prev,
+                otherExpenses: v,
+              })),
+          )}
+          keyboardType="numeric"
+          prefix="$"
+        />
+
+        <View style={styles.totalCard}>
+          <Text style={styles.totalLabel}>Total Monthly Costs</Text>
+          <Text style={styles.totalValue}>
+            {formatCurrency(totalMonthlyCosts)}
+          </Text>
+        </View>
+
+        <Button
+          title="Continue to Revenue"
+          onPress={() => scrollToSection('revenue')}
+          style={styles.flowButton}
+        />
+      </View>
+
+      {/* STEP 3: REVENUE */}
+      <View
+        style={styles.section}
+        onLayout={event => {
+          const y = event.nativeEvent.layout.y;
+          setSectionPositions(prev => ({
+            ...prev,
+            revenue: y,
+          }));
+        }}
+      >
+        <View style={styles.sectionHeaderRow}>
+          <Text style={styles.sectionTitle}>Monthly Revenue Projections</Text>
+          <View style={styles.stepPill}>
+            <Text style={styles.stepPillText}>Step 3 of 3</Text>
+          </View>
+        </View>
+        <Text style={styles.sectionSubtitle}>
+          Expected income per month
+        </Text>
+
+        <Input
+          label="Average Items Sold Per Day"
+          value={revenue.itemsSoldPerDay}
+          onChangeText={value =>
+            setRevenue(prev => ({ ...prev, itemsSoldPerDay: value }))
+          }
+          onFocus={onFocusClearZero(
+            revenue.itemsSoldPerDay,
+            v => setRevenue(prev => ({ ...prev, itemsSoldPerDay: v })),
+          )}
+          keyboardType="numeric"
+          helperText="Start conservative: 15–25 items"
+        />
+
+        <Input
+          label="Average Sale Price"
+          value={revenue.averageSalePrice}
+          onChangeText={value =>
+            setRevenue(prev => ({ ...prev, averageSalePrice: value }))
+          }
+          onFocus={onFocusClearZero(
+            revenue.averageSalePrice,
+            v => setRevenue(prev => ({ ...prev, averageSalePrice: v })),
+          )}
+          keyboardType="numeric"
+          prefix="$"
+          helperText="Common range: $1.50–3.00"
+        />
+
+        <Input
+          label="Days Operating Per Month"
+          value={revenue.daysOperatingPerMonth}
+          onChangeText={value =>
+            setRevenue(prev => ({ ...prev, daysOperatingPerMonth: value }))
+          }
+          onFocus={onFocusClearZero(
+            revenue.daysOperatingPerMonth,
+            v =>
+              setRevenue(prev => ({ ...prev, daysOperatingPerMonth: v })),
+          )}
+          keyboardType="numeric"
+          helperText="Adjust for holidays/maintenance"
+        />
+
+        <View style={styles.totalCard}>
+          <Text style={styles.totalLabel}>Total Monthly Revenue</Text>
+          <Text style={styles.totalValue}>
+            {formatCurrency(totalMonthlyRevenue)}
+          </Text>
+        </View>
+
+        <Button
+          title="View Profitability Metrics"
+          onPress={() => scrollToSection('metrics')}
+          style={styles.flowButton}
+        />
+      </View>
+
+      {/* PROFITABILITY METRICS */}
+      <View
+        style={styles.metricsSection}
+        onLayout={event => {
+          const y = event.nativeEvent.layout.y;
+          setSectionPositions(prev => ({
+            ...prev,
+            metrics: y,
+          }));
+        }}
+      >
+        {/* VERDICT CARD */}
+        <View style={[styles.verdictCard, { borderColor: verdict.color }]}>
+          <Text style={styles.verdictEmoji}>{verdict.emoji}</Text>
+          <Text style={[styles.verdictLabel, { color: verdict.color }]}>{verdict.label}</Text>
+          <Text style={styles.verdictMessage}>{verdict.message}</Text>
+          {paybackDate && (
+            <Text style={[styles.verdictPayback, { color: verdict.color }]}>
+              Payback by {paybackDate}
+            </Text>
+          )}
+        </View>
+
+        <Text style={styles.metricsTitle}>Profitability Metrics</Text>
+        <Text style={styles.metricsSubtitle}>Your bottom line</Text>
+
+        <View style={styles.metricsGrid}>
+          <MetricBox
+            label="Monthly Net Profit"
+            value={formatCurrency(monthlyNetProfit)}
+            valueColor={getProfitColor(monthlyNetProfit)}
+            highlight
+            style={styles.gridItem}
+          />
+          <MetricBox
+            label="Annual Net Profit"
+            value={formatCurrency(annualNetProfit)}
+            valueColor={getProfitColor(annualNetProfit)}
+            highlight
+            style={styles.gridItem}
+          />
+          <MetricBox
+            label="ROI Percentage"
+            value={formatPercent(roiPercentage)}
+            valueColor={getROIColor(roiPercentage)}
+            highlight={true}
+            style={styles.gridItem}
+          />
+<MetricBox
+  label="Break-even Point"
+  value={
+    breakEvenMonths > 0
+      ? `${breakEvenMonths.toFixed(1)} mo`
+      : 'N/A'
+  }
+  style={styles.gridItem}
+/>
+{breakEvenMonths > 0 && (
+  <Text style={[styles.microCopy, { color: getBreakEvenColor(breakEvenMonths) }]}>
+    {getBreakEvenMessage(breakEvenMonths)}
+  </Text>
+)}
+          <MetricBox
+            label="Profit Margin"
+            value={formatPercent(profitMargin)}
+            valueColor={getProfitColor(profitMargin)}
+            style={styles.gridItem}
+          />
+          <MetricBox
+            label="Monthly Cash Flow"
+            value={formatCurrency(monthlyCashFlow)}
+            valueColor={getProfitColor(monthlyCashFlow)}
+            style={styles.gridItem}
+          />
+        </View>
+      </View>
+
+      {/* UPGRADE SECTION */}
+      {!isPremium && (
+        <View style={styles.upgradeSection}>
+          <Text style={styles.upgradeTitle}>Want to optimize further?</Text>
+          <Text style={styles.upgradeText}>
+            Unlock Location Comparison, Product Mix Optimizer, and Growth Projector
+          </Text>
+          <Button
+            title="Unlock Pro - $39.99"
+            onPress={() => setShowPaywall(true)}
+            style={styles.upgradeButton}
+          />
+        </View>
+      )}
+    </ScrollView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  content: {
+    padding: spacing.lg,
+    paddingBottom: spacing.xxl * 2,
+  },
+  header: {
+    ...textVariants.title,
+    marginBottom: spacing.xl,
+  },
+  section: {
+    marginBottom: spacing.xl,
+  },
+  sectionHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing.xs,
+  },
+  sectionTitle: {
+    ...textVariants.subtitle,
+  },
+  sectionSubtitle: {
+    ...textVariants.body,
+    fontSize: 12,
+    color: colors.muted,
+    marginBottom: spacing.md,
+  },
+  stepPill: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
+  },
+  stepPillText: {
+    fontSize: 11,
+    color: colors.muted,
+    fontWeight: '600',
+  },
+  totalCard: {
+    marginTop: spacing.md,
+    padding: spacing.lg,
+    borderRadius: radii.md,
+    backgroundColor: colors.surfaceAlt,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  totalLabel: {
+    ...textVariants.body,
+    color: colors.muted,
+    marginBottom: spacing.xs,
+  },
+  totalValue: {
+    ...textVariants.subtitle,
+    fontSize: 24,
+    fontWeight: '800',
+  },
+  flowButton: {
+    marginTop: spacing.lg,
+  },
+  metricsSection: {
+    marginTop: spacing.xl,
+  },
+  metricsTitle: {
+    ...textVariants.subtitle,
+    marginBottom: spacing.xs,
+  },
+  metricsSubtitle: {
+    ...textVariants.body,
+    fontSize: 12,
+    color: colors.muted,
+    marginBottom: spacing.md,
+  },
+  metricsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginHorizontal: -spacing.xs,
+  },
+  gridItem: {
+    width: '48%',
+    marginHorizontal: spacing.xs,
+    marginBottom: spacing.md,
+  },
+  metricBox: {
+    padding: spacing.lg,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.surfaceAlt,
+  },
+  metricBoxHighlight: {
+    borderColor: colors.accentPrimary,
+  },
+  metricLabel: {
+    ...textVariants.body,
+    fontSize: 11,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    color: colors.muted,
+    marginBottom: spacing.sm,
+  },
+  metricValue: {
+    ...textVariants.subtitle,
+    fontSize: 28,
+    fontWeight: '900',
+  },
+  upgradeSection: {
+    marginTop: spacing.xl,
+    padding: spacing.xl,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.accentPrimary,
+    alignItems: 'center',
+    marginBottom: spacing.xxl,
+  },
+  upgradeTitle: {
+    ...textVariants.subtitle,
+    marginBottom: spacing.sm,
+  },
+  upgradeText: {
+    ...textVariants.body,
+    textAlign: 'center',
+    marginBottom: spacing.lg,
+  },
+  upgradeButton: {
+    width: '100%',
+  },
+  projectNameContainer: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: spacing.sm,
+  marginBottom: spacing.xl,
+},
+editIcon: {
+  fontSize: 18,
+  opacity: 0.5,
+},
+projectNameInput: {
+  fontSize: 28,
+  fontWeight: '700',
+  color: colors.textPrimary,
+  borderBottomWidth: 2,
+  borderBottomColor: colors.accentPrimary,
+  paddingBottom: spacing.sm,
+  marginBottom: spacing.xl,
+},
+microCopy: {
+  fontSize: 11,
+  fontWeight: '600',
+  marginTop: spacing.xs,
+  textAlign: 'center',
+},
+exportButtons: {
+  flexDirection: 'row',
+  gap: spacing.md,
+  marginBottom: spacing.xl,
+},
+exportButton: {
+  flex: 1,
+},
+verdictCard: {
+  alignItems: 'center',
+  padding: spacing.xl,
+  borderRadius: radii.md,
+  backgroundColor: colors.surface,
+  borderWidth: 2,
+  marginBottom: spacing.xl,
+},
+verdictEmoji: {
+  fontSize: 40,
+  marginBottom: spacing.sm,
+},
+verdictLabel: {
+  fontSize: 20,
+  fontWeight: '900',
+  letterSpacing: 1,
+  marginBottom: spacing.xs,
+},
+verdictMessage: {
+  ...textVariants.body,
+  fontSize: 13,
+  textAlign: 'center',
+  color: colors.textSecondary,
+},
+verdictPayback: {
+  fontSize: 14,
+  fontWeight: '700',
+  marginTop: spacing.md,
+},
+});

@@ -1,0 +1,29 @@
+# Expo / React Native
+node_modules/
+.expo/
+dist/
+web-build/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+.env
+.env.local
+.env.*.local
+
+# Next.js website
+website/.next/
+website/out/
+website/node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Windows reserved device name (created by error)
+NUL
+
+# Claude memory / local session files
+.claude/projects/
