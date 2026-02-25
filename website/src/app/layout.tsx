@@ -7,7 +7,7 @@ import { Footer } from '@/components/Footer';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://vendroi.app'),
+  metadataBase: new URL('https://vendroi.com'),
   icons: {
     icon: [
       { url: '/icon.png', type: 'image/png' },
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     title: 'VendROI - Know Before You Invest',
     description:
       'Calculate ROI, compare locations, and get a clear investment verdict all before buying your first vending machine.',
-    url: 'https://vendroi.app',
+    url: 'https://vendroi.com',
     siteName: 'VendROI',
     type: 'website',
   },
