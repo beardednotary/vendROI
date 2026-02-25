@@ -27,3 +27,6 @@ NUL
 
 # Claude memory / local session files
 .claude/projects/
+
+.vercel
+.env*.local
