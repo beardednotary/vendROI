@@ -54,8 +54,8 @@ export default function Support() {
             Have a question, bug report, or feature request? We&apos;d love to hear from you.
           </p>
           <a
-            href="mailto:support@vendroi.app"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-vr-orange to-orange-500 text-white text-sm font-semibold hover:brightness-110 transition-all"
+            href="mailto:support@vendroi.com"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-vr-orange text-white text-sm font-semibold hover:brightness-110 transition-all"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -65,7 +65,7 @@ export default function Support() {
                 d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
               />
             </svg>
-            support@vendroi.app
+            support@vendroi.com
           </a>
           <p className="text-vr-muted text-xs mt-3">
             We typically respond within 24 hours.

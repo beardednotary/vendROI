@@ -64,7 +64,13 @@ export function Footer() {
 
         <div className="border-t border-vr-border mt-10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-vr-muted text-sm">&copy; {new Date().getFullYear()} VendROI. All rights reserved.</p>
-          <p className="text-vr-muted text-xs">Not financial advice. For informational purposes only.</p>
+          <div className="flex flex-col sm:flex-row items-center gap-3 text-xs text-vr-muted">
+            <span>Not financial advice. For informational purposes only.</span>
+            <span className="hidden sm:inline">·</span>
+            <a href="https://dahvio.com" target="_blank" rel="noopener noreferrer" className="hover:text-vr-text transition-colors">
+              Built independently by DahVio Studios
+            </a>
+          </div>
         </div>
       </div>
     </footer>

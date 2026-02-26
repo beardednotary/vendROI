@@ -77,8 +77,8 @@ export default function PrivacyPolicy() {
           <Section title="Contact Us">
             <p>
               If you have questions about this Privacy Policy, please contact us at{' '}
-              <a href="mailto:support@vendroi.app" className="text-vr-orange hover:underline">
-                support@vendroi.app
+              <a href="mailto:support@vendroi.com" className="text-vr-orange hover:underline">
+                support@vendroi.com
               </a>
             </p>
           </Section>

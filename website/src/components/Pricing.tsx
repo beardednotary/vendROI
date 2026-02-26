@@ -14,7 +14,7 @@ const proFeatures = [
   'Product Mix Optimizer',
   'Growth Projections',
   'Portfolio at a Glance',
-  'Priority support',
+  'Email support',
 ];
 
 export function Pricing() {
