@@ -19,13 +19,13 @@ export function Navbar() {
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-8">
-            <a href="#features" className="text-vr-text-secondary hover:text-vr-text transition-colors text-sm">
+            <a href="/#features" className="text-vr-text-secondary hover:text-vr-text transition-colors text-sm">
               Features
             </a>
-            <a href="#how-it-works" className="text-vr-text-secondary hover:text-vr-text transition-colors text-sm">
+            <a href="/#how-it-works" className="text-vr-text-secondary hover:text-vr-text transition-colors text-sm">
               How It Works
             </a>
-            <a href="#pricing" className="text-vr-text-secondary hover:text-vr-text transition-colors text-sm">
+            <a href="/#pricing" className="text-vr-text-secondary hover:text-vr-text transition-colors text-sm">
               Pricing
             </a>
             <a
@@ -58,21 +58,21 @@ export function Navbar() {
         <div className="md:hidden bg-vr-surface border-t border-vr-border">
           <div className="px-4 py-4 space-y-3">
             <a
-              href="#features"
+              href="/#features"
               className="block py-2 text-vr-text-secondary hover:text-vr-text transition-colors"
               onClick={() => setMobileOpen(false)}
             >
               Features
             </a>
             <a
-              href="#how-it-works"
+              href="/#how-it-works"
               className="block py-2 text-vr-text-secondary hover:text-vr-text transition-colors"
               onClick={() => setMobileOpen(false)}
             >
               How It Works
             </a>
             <a
-              href="#pricing"
+              href="/#pricing"
               className="block py-2 text-vr-text-secondary hover:text-vr-text transition-colors"
               onClick={() => setMobileOpen(false)}
             >

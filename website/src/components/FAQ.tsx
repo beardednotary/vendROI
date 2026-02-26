@@ -16,7 +16,7 @@ const faqs = [
   {
     question: 'What does the Pro upgrade include?',
     answer:
-      'Unlimited locations, side-by-side location scoring, Product Mix Optimizer, Growth Projections, Portfolio at a Glance, and priority support. One-time purchase — no subscriptions.',
+      'Unlimited locations, side-by-side location scoring, Product Mix Optimizer, Growth Projections, Portfolio at a Glance, and email support. One-time purchase — no subscriptions.',
   },
   {
     question: 'Can I restore my Pro purchase later?',
