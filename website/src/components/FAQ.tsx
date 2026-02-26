@@ -6,7 +6,7 @@ const faqs = [
   {
     question: 'What makes VendROI different from a spreadsheet?',
     answer:
-      'VendROI turns your inputs into a clear verdict (STRONG, SOLID, CAUTION, HIGH RISK) with ROI + payback date + margin, and (Pro) location comparisons + portfolio view. Spreadsheets can do math — they don't tell you what to do next.',
+      "VendROI turns your inputs into a clear verdict (STRONG, SOLID, CAUTION, HIGH RISK) with ROI + payback date + margin, and (Pro) location comparisons + portfolio view. Spreadsheets can do math — they don't tell you what to do next.",
   },
   {
     question: 'Is VendROI financial advice?',
@@ -26,7 +26,7 @@ const faqs = [
   {
     question: 'Is my data private?',
     answer:
-      'Yes. Your investment data stays on your device. We don't sell or share your data. If you ever opt into anonymous benchmarking, it's aggregated and de-identified.',
+      "Yes. Your investment data stays on your device. We don't sell or share your data. If you ever opt into anonymous benchmarking, it's aggregated and de-identified.",
   },
   {
     question: 'Does VendROI work for all types of vending machines?',
