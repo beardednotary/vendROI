@@ -1,8 +1,8 @@
 const stats = [
-  { label: 'Machine cost modeled', value: '$2k – $8k' },
-  { label: 'COGS range assumed', value: '55 – 70%' },
-  { label: 'Verdict factors', value: 'ROI + Payback + Margin' },
   { label: 'Time to first verdict', value: '< 5 min' },
+  { label: 'Verdict is based on', value: 'ROI + Payback + Margin' },
+  { label: 'No login required', value: 'Offline-first' },
+  { label: 'Best for', value: 'New + scaling operators' },
 ];
 
 export function StatsStrip() {

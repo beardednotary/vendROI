@@ -21,7 +21,7 @@ export function CTA() {
             href="#"
             className="inline-flex items-center justify-center px-8 py-4 rounded-2xl bg-vr-bg border border-vr-border text-vr-text font-semibold text-lg hover:border-vr-orange/50 transition-all"
           >
-            Download for Android
+            Join Android Waitlist
           </a>
         </div>
       </div>

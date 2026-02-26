@@ -1,3 +1,5 @@
+const PRO_PRICE = 29.99;
+
 const freeFeatures = [
   'Investment Verdict',
   'Basic ROI calculator',
@@ -12,13 +14,13 @@ const proFeatures = [
   'Product Mix Optimizer',
   'Growth Projections',
   'Portfolio at a Glance',
+  'Priority support',
 ];
 
 export function Pricing() {
   return (
     <section id="pricing" className="py-20 md:py-32 bg-vr-bg border-t border-vr-border">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Header */}
         <div className="text-center mb-16">
           <p className="text-vr-orange text-sm font-semibold uppercase tracking-widest mb-4">Pricing</p>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
@@ -27,18 +29,19 @@ export function Pricing() {
           <p className="text-lg text-vr-text-secondary max-w-2xl mx-auto">
             No subscriptions. No hidden fees. Pay once, own every decision tool.
           </p>
+          <p className="text-vr-muted text-sm mt-3">
+            Restore purchases anytime (same Apple/Google account).
+          </p>
         </div>
 
-        {/* Pricing cards */}
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          {/* Free */}
           <div className="bg-vr-surface rounded-2xl p-8 border border-vr-border">
             <h3 className="text-lg font-semibold text-vr-text mb-2">Free</h3>
             <div className="flex items-baseline gap-1 mb-6">
               <span className="text-4xl font-bold text-vr-text">$0</span>
             </div>
             <p className="text-vr-text-secondary text-sm mb-8">
-              Model your first investment and get a verdict before you risk any capital.
+              Model your first investment and get a verdict before you risk capital.
             </p>
             <ul className="space-y-3 mb-8">
               {freeFeatures.map((feature, i) => (
@@ -58,18 +61,17 @@ export function Pricing() {
             </a>
           </div>
 
-          {/* Pro */}
           <div className="bg-vr-surface rounded-2xl p-8 border-2 border-vr-orange/40">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-lg font-semibold text-vr-text">Pro</h3>
               <span className="text-vr-orange text-xs font-semibold uppercase tracking-wider">Best Value</span>
             </div>
             <div className="flex items-baseline gap-1 mb-2">
-              <span className="text-4xl font-bold text-vr-orange">$29.99</span>
+              <span className="text-4xl font-bold text-vr-orange">${PRO_PRICE.toFixed(2)}</span>
             </div>
             <p className="text-vr-muted text-xs mb-6">One-time purchase. No subscription.</p>
             <p className="text-vr-text-secondary text-sm mb-8">
-              Unlock every decision tool. Make profitable calls across your entire portfolio.
+              Compare locations, optimize mix, and track your portfolio — without spreadsheets.
             </p>
             <ul className="space-y-3 mb-8">
               {proFeatures.map((feature, i) => (
@@ -85,7 +87,7 @@ export function Pricing() {
               href="#"
               className="block w-full text-center py-3 rounded-xl bg-vr-orange text-white font-semibold hover:brightness-110 transition-all"
             >
-              Get Pro — $29.99
+              Get Pro — ${PRO_PRICE.toFixed(2)}
             </a>
           </div>
         </div>

@@ -7,7 +7,8 @@ const examples = [
     roi: '52%',
     payback: '8 mo',
     margin: '38%',
-    detail: 'High-traffic office park, $4,200 machine cost, strong product mix.',
+    net: '$525/mo',
+    detail: 'High-traffic office park, solid sales estimate, strong margins.',
   },
   {
     verdict: 'CAUTION',
@@ -17,7 +18,8 @@ const examples = [
     roi: '18%',
     payback: '20 mo',
     margin: '22%',
-    detail: 'Moderate foot traffic, higher COGS, location needs optimization.',
+    net: '$165/mo',
+    detail: 'Moderate traffic. Profitable, but payback is slow unless optimized.',
   },
   {
     verdict: 'HIGH RISK',
@@ -27,7 +29,8 @@ const examples = [
     roi: '6%',
     payback: '44 mo',
     margin: '11%',
-    detail: 'Low daily sales estimate, capital tied up for nearly 4 years.',
+    net: '$45/mo',
+    detail: 'Low sales estimate ties up capital for years. Probably pass.',
   },
 ];
 
@@ -36,13 +39,15 @@ export function VerdictExamples() {
     <section className="py-20 md:py-32 bg-vr-bg border-t border-vr-border">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
-          <p className="text-vr-orange text-sm font-semibold uppercase tracking-widest mb-4">Verdict Examples</p>
+          <p className="text-vr-orange text-sm font-semibold uppercase tracking-widest mb-4">
+            Verdict Examples
+          </p>
           <h2 className="text-3xl md:text-4xl font-bold text-vr-text mb-4">
             Know the answer{' '}
             <span className="text-vr-orange">before you commit capital</span>
           </h2>
           <p className="text-vr-text-secondary max-w-xl mx-auto">
-            Every investment runs through the same model. The verdict is always clear.
+            The verdict is designed to be obvious — even if you hate spreadsheets.
           </p>
         </div>
 
@@ -53,10 +58,14 @@ export function VerdictExamples() {
                 {ex.verdict}
               </span>
 
-              <div className="mt-4 grid grid-cols-3 gap-3 mb-5">
+              <div className="mt-4 grid grid-cols-2 gap-3 mb-5">
                 <div>
                   <p className="text-vr-muted text-xs uppercase tracking-wider mb-1">ROI</p>
                   <p className={`text-2xl font-bold ${ex.color}`}>{ex.roi}</p>
+                </div>
+                <div>
+                  <p className="text-vr-muted text-xs uppercase tracking-wider mb-1">Net / mo</p>
+                  <p className="text-2xl font-bold text-vr-text">{ex.net}</p>
                 </div>
                 <div>
                   <p className="text-vr-muted text-xs uppercase tracking-wider mb-1">Payback</p>
