@@ -1,58 +1,59 @@
 const features = [
   {
-    title: 'Investment Verdict',
+    title: 'Is this investment worth the risk?',
     description:
-      'Get an instant, color-coded verdict on any vending machine investment — STRONG, SOLID, CAUTION, or HIGH RISK — based on ROI and break-even analysis.',
+      'Get an instant verdict — STRONG, SOLID, CAUTION, or HIGH RISK — based on ROI, payback timeline, and margin. No ambiguity.',
   },
   {
-    title: 'Location Comparison',
+    title: 'Which location makes money faster?',
     description:
-      'Score and compare potential vending locations side by side. See estimated daily sales, monthly profit, and overall location score out of 100.',
+      'Score and compare locations side by side. See estimated daily sales, monthly profit, and a 0–100 location score before you commit.',
   },
   {
-    title: 'Product Mix Optimizer',
+    title: 'What should I stock to maximize return?',
     description:
-      'Dial in your product selection. Track margins per item, see which products drive profit, and optimize your inventory mix.',
+      'Track margin per product, see what\'s dragging profitability, and optimize your inventory mix for maximum capital efficiency.',
   },
   {
-    title: 'Growth Projections',
+    title: 'If I add 1 machine per quarter, what happens?',
     description:
-      'See where your vending portfolio is headed. Project revenue, profit, and ROI over 6, 12, and 24 months.',
+      'Project total revenue, profit, and ROI across 6, 12, and 24 months. See how each new machine changes your portfolio\'s return.',
   },
   {
-    title: 'Portfolio at a Glance',
+    title: 'How is my whole portfolio performing?',
     description:
-      'Your complete vending portfolio in one view. Total invested, annual revenue, ROI, monthly profit, break-even status — always one tap away.',
+      'Total invested, annual revenue, blended ROI, monthly profit, and break-even status — your entire operation in one view.',
   },
   {
-    title: 'Operator IQ',
+    title: 'Am I making better decisions over time?',
     description:
-      'A personalized score that measures your vending investment skill — based on ROI performance, diversification, and decision quality.',
+      'A personalized score measuring your investment quality — based on ROI performance, diversification, and decision history.',
     comingSoon: true,
   },
 ];
 
 export function Features() {
   return (
-    <section id="features" className="py-20 md:py-32 bg-vr-bg">
+    <section id="features" className="py-20 md:py-32 bg-vr-surface border-t border-vr-border">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16 md:mb-20">
+          <p className="text-vr-orange text-sm font-semibold uppercase tracking-widest mb-4">Decisions, Not Features</p>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-            Everything You Need to{' '}
-            <span className="text-vr-orange">Invest Smarter</span>
+            Every answer an operator{' '}
+            <span className="text-vr-orange">actually needs</span>
           </h2>
           <p className="text-lg text-vr-text-secondary max-w-2xl mx-auto">
-            Six tools designed specifically for vending machine operators and investors.
+            Built around the decisions that determine whether your capital works for you — or against you.
           </p>
         </div>
 
-        {/* Feature grid */}
+        {/* Decision grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((feature, i) => (
             <div
               key={i}
-              className="relative bg-vr-surface rounded-2xl p-6 border border-vr-border hover:border-vr-orange/30 transition-colors"
+              className="relative bg-vr-bg rounded-2xl p-6 border border-vr-border hover:border-vr-orange/30 transition-colors"
             >
               {feature.comingSoon && (
                 <span className="absolute top-4 right-4 text-vr-muted text-xs font-medium uppercase tracking-wider">
@@ -60,10 +61,16 @@ export function Features() {
                 </span>
               )}
 
-              <h3 className="text-lg font-bold text-vr-text mb-2">{feature.title}</h3>
+              <h3 className="text-base font-bold text-vr-text mb-2 leading-snug pr-16">{feature.title}</h3>
               <p className="text-vr-text-secondary text-sm leading-relaxed">{feature.description}</p>
             </div>
           ))}
+        </div>
+
+        <div className="text-center mt-12">
+          <a href="#pricing" className="text-vr-orange text-sm font-semibold hover:underline">
+            See pricing →
+          </a>
         </div>
       </div>
     </section>

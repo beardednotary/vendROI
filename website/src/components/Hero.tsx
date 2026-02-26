@@ -8,16 +8,20 @@ export function Hero() {
           {/* Copy */}
           <div className="text-center lg:text-left">
             <p className="text-vr-text-secondary text-sm uppercase tracking-widest mb-6">
-              Vending Machine Investment Calculator
+              Built for operators buying their first machine — and serious owners scaling their portfolio.
             </p>
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-vr-text mb-6 leading-tight">
-              Know Before{' '}
-              <span className="text-vr-orange">You Invest</span>
+              Your investment verdict{' '}
+              <span className="text-vr-orange">in minutes</span>
             </h1>
 
-            <p className="text-lg md:text-xl text-vr-text-secondary leading-relaxed mb-10 max-w-xl mx-auto lg:mx-0">
-              Calculate ROI, compare locations, and get a clear investment verdict — all before buying your first vending machine.
+            <p className="text-lg md:text-xl text-vr-text-secondary leading-relaxed mb-4 max-w-xl mx-auto lg:mx-0">
+              Get ROI, payback date, and a clear verdict in minutes — before you spend thousands on your first machine.
+            </p>
+
+            <p className="text-vr-muted text-sm mb-10 max-w-xl mx-auto lg:mx-0">
+              Not a spreadsheet. Not a guess. A decision.
             </p>
 
             {/* CTA buttons */}
