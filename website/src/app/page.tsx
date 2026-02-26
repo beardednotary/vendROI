@@ -1,6 +1,7 @@
 import { Hero } from '@/components/Hero';
 import { StatsStrip } from '@/components/StatsStrip';
 import { ProblemSolution } from '@/components/ProblemSolution';
+import { ScreenshotsCarousel } from '@/components/ScreenshotsCarousel';
 import { HowItWorks } from '@/components/HowItWorks';
 import { VerdictExamples } from '@/components/VerdictExamples';
 import { Features } from '@/components/Features';
@@ -14,6 +15,7 @@ export default function Home() {
       <Hero />
       <StatsStrip />
       <ProblemSolution />
+      <ScreenshotsCarousel />
       <HowItWorks />
       <VerdictExamples />
       <Features />

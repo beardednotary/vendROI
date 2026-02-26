@@ -12,8 +12,6 @@ const proFeatures = [
   'Product Mix Optimizer',
   'Growth Projections',
   'Portfolio at a Glance',
-  'Operator IQ (coming soon)',
-  'Priority support',
 ];
 
 export function Pricing() {
@@ -67,7 +65,7 @@ export function Pricing() {
               <span className="text-vr-orange text-xs font-semibold uppercase tracking-wider">Best Value</span>
             </div>
             <div className="flex items-baseline gap-1 mb-2">
-              <span className="text-4xl font-bold text-vr-orange">$39.99</span>
+              <span className="text-4xl font-bold text-vr-orange">$29.99</span>
             </div>
             <p className="text-vr-muted text-xs mb-6">One-time purchase. No subscription.</p>
             <p className="text-vr-text-secondary text-sm mb-8">
@@ -87,7 +85,7 @@ export function Pricing() {
               href="#"
               className="block w-full text-center py-3 rounded-xl bg-vr-orange text-white font-semibold hover:brightness-110 transition-all"
             >
-              Get Pro — $39.99
+              Get Pro — $29.99
             </a>
           </div>
         </div>
