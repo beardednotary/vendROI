@@ -22,13 +22,31 @@ import {
 } from '../utils/calculations';
 import { PortfolioTicker } from '../components/PortfolioTicker';
 import { PaywallScreen } from './PaywallScreen';
-import { exportDashboardToCSV, exportDashboardToPDF } from '../utils/export';
+import { exportFullProjectToCSV, exportFullProjectToPDF } from '../utils/export';
 import { Toast } from '../utils/toast';
+import { REVENUECAT_CONFIG } from '../config/revenueCat';
 
 export const DashboardScreen: React.FC = () => {
-  const { dashboards, addDashboard, updateDashboard, isPremium } = useAppStore();
+  const {
+    dashboards,
+    addDashboard,
+    updateDashboard,
+    locationComparisons,
+    productMixes,
+    growthProjectors,
+    isPremium,
+  } = useAppStore();
   const [showPaywall, setShowPaywall] = useState(false);
   const currentDashboard = dashboards[0];
+  const currentLocationComparison = locationComparisons.find(
+    (comparison) => comparison.dashboardId === currentDashboard?.id
+  );
+  const currentProductMix = productMixes.find(
+    (mix) => mix.dashboardId === currentDashboard?.id
+  );
+  const currentGrowthProjector = growthProjectors.find(
+    (growth) => growth.dashboardId === currentDashboard?.id
+  );
   
   const [name, setName] = useState('My First Machine');
   const [isEditingName, setIsEditingName] = useState(false);
@@ -285,7 +303,7 @@ const getBreakEvenColor = (months: number) => {
 
 <View style={styles.exportButtons}>
   <Button
-    title="Export PDF"
+    title="Export Full PDF"
     onPress={async () => {
       if (!currentDashboard) return;
       try {
@@ -300,11 +318,17 @@ const getBreakEvenColor = (months: number) => {
           profitMargin,
           monthlyCashFlow,
         };
-        await exportDashboardToPDF(currentDashboard, metrics);
+        await exportFullProjectToPDF(
+          currentDashboard,
+          metrics,
+          currentLocationComparison?.locations || [],
+          currentProductMix?.products || [],
+          currentGrowthProjector
+        );
         Toast.show({
           type: 'success',
           text1: 'PDF Ready',
-          text2: 'Report generated successfully',
+          text2: 'Full project report generated',
         });
       } catch (error) {
         const message = error instanceof Error ? error.message : 'Could not generate PDF';
@@ -320,7 +344,7 @@ const getBreakEvenColor = (months: number) => {
   />
   
   <Button
-    title="Export CSV"
+    title="Export Full CSV"
     onPress={async () => {
       if (!currentDashboard) return;
       try {
@@ -335,11 +359,17 @@ const getBreakEvenColor = (months: number) => {
           profitMargin,
           monthlyCashFlow,
         };
-        await exportDashboardToCSV(currentDashboard, metrics);
+        await exportFullProjectToCSV(
+          currentDashboard,
+          metrics,
+          currentLocationComparison?.locations || [],
+          currentProductMix?.products || [],
+          currentGrowthProjector
+        );
         Toast.show({
           type: 'success',
           text1: 'CSV Ready',
-          text2: 'Data exported successfully',
+          text2: 'Full project data exported',
         });
       } catch (error) {
         const message = error instanceof Error ? error.message : 'Could not generate CSV';
@@ -801,7 +831,7 @@ const getBreakEvenColor = (months: number) => {
             Unlock Location Comparison, Product Mix Optimizer, and Growth Projector
           </Text>
           <Button
-            title="Unlock Pro - $39.99"
+            title={`Unlock Pro - ${REVENUECAT_CONFIG.fallbackPrice}`}
             onPress={() => setShowPaywall(true)}
             style={styles.upgradeButton}
           />

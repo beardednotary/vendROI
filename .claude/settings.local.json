@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add website/src/)",
+      "Bash(git commit -m \"Update hero copy, trust bar, stats strip, verdict examples, CTA, FAQ, pricing\")",
+      "Bash(git push)",
+      "Bash(git add website/src/components/FAQ.tsx)",
+      "Bash(git commit -m \"Restore FAQ component export \\(accidentally wiped\\)\")",
+      "Bash(git commit -m \"Fix unescaped apostrophes in FAQ answers\")",
+      "Bash(git add website/src/components/Footer.tsx website/src/components/Pricing.tsx website/src/app/terms/page.tsx website/src/app/privacy/page.tsx website/src/app/support/page.tsx)",
+      "Bash(git commit -m \"Footer DahVio credit, email support, support@vendroi.com, price $29.99 in terms\")",
+      "Bash(git add website/src/components/Hero.tsx website/src/components/TrustBar.tsx website/src/components/FAQ.tsx website/src/components/Navbar.tsx website/src/app/page.tsx)",
+      "Bash(git commit -m \"Trust bar in hero, fix double render, fix navbar links from legal pages\")"
+    ]
+  }
+}

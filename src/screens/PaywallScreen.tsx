@@ -141,7 +141,7 @@ export const PaywallScreen: React.FC<PaywallScreenProps> = ({
     offering?.availablePackages.find(
       (pkg) => pkg.product.identifier === REVENUECAT_CONFIG.productId
     ) ?? offering?.availablePackages[0];
-  const price = selectedPackage?.product.priceString || '$39.99';
+  const price = selectedPackage?.product.priceString || REVENUECAT_CONFIG.fallbackPrice;
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>

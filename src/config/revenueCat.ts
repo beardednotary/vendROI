@@ -5,4 +5,5 @@ export const REVENUECAT_CONFIG = {
   entitlementId: 'premium',
   offeringId: 'default',
   productId: 'vendroi_pro1',
+  fallbackPrice: '$29.99',
 };

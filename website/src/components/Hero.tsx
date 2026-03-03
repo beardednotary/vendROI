@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { TrustBar } from '@/components/TrustBar';
 
 export function Hero() {
@@ -64,14 +65,18 @@ export function Hero() {
               >
                 <div className="px-6 py-5 border-b border-vr-border/70">
                   <p className="text-vr-text font-semibold">App preview</p>
-                  <p className="text-vr-muted text-xs mt-1">Replace with real screenshot</p>
+                  <p className="text-vr-muted text-xs mt-1">Investment Summary screen</p>
                 </div>
 
-                <div className="aspect-[9/19] flex items-center justify-center">
-                  <div className="text-center px-8">
-                    <p className="text-vr-muted text-sm">Drop in an iPhone screenshot</p>
-                    <p className="text-vr-muted text-xs mt-1">This area should be the actual app UI</p>
-                  </div>
+                <div className="aspect-[9/19] relative">
+                  <Image
+                    src="/images/vendroi-app-summary-screen.jpg"
+                    alt="VendROI app Investment Summary screen showing ROI, monthly profit, and payback metrics"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 640px) 290px, 320px"
+                    priority
+                  />
                 </div>
               </div>
 
