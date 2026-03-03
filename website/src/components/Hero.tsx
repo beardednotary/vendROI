@@ -63,25 +63,17 @@ export function Hero() {
                            shadow-[0_30px_80px_-40px_rgba(0,0,0,0.7)]
                            overflow-hidden"
               >
-                <div className="px-6 py-5 border-b border-vr-border/70">
-                  <p className="text-vr-text font-semibold">App preview</p>
-                  <p className="text-vr-muted text-xs mt-1">Investment Summary screen</p>
-                </div>
-
                 <div className="aspect-[9/19] relative">
                   <Image
-                    src="/images/vendroi-app-summary-screen.jpg"
-                    alt="VendROI app Investment Summary screen showing ROI, monthly profit, and payback metrics"
+                    src="/images/vendroi-app-hero-screenshot.jpeg"
+                    alt="VendROI app screenshot showing the calculator dashboard and ROI metrics"
                     fill
-                    className="object-cover"
+                    className="object-contain"
                     sizes="(max-width: 640px) 290px, 320px"
                     priority
                   />
                 </div>
               </div>
-
-              {/* subtle glow */}
-              <div className="pointer-events-none absolute -inset-8 bg-[radial-gradient(circle_at_30%_20%,rgba(249,115,22,0.18),transparent_55%)]" />
             </div>
           </div>
         </div>
