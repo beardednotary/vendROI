@@ -31,7 +31,7 @@ export const createBlankDashboard = (name: string = 'New Machine'): DashboardDat
 
 export const createSampleDashboard = (): DashboardData => {
   return {
-    id: 'sample-dashboard',
+    id: `sample-${Date.now()}`,
     name: 'Sample Coffee Shop Machine',
     initialInvestment: {
       machineCost: 4500,

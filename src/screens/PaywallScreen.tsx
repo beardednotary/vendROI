@@ -159,22 +159,22 @@ export const PaywallScreen: React.FC<PaywallScreenProps> = ({
 
       <View style={styles.featuresSection}>
         <Feature
-          icon="LOC"
+          icon="📍"
           title="Location Comparison"
           description="Score and compare up to 10 potential locations"
         />
         <Feature
-          icon="MIX"
+          icon="🛒"
           title="Product Mix Optimizer"
           description="Track profitability of up to 10 products"
         />
         <Feature
-          icon="GRW"
+          icon="📈"
           title="Growth Projector"
           description="Model your 12-month expansion strategy"
         />
         <Feature
-          icon="EXP"
+          icon="📊"
           title="Export Reports"
           description="Generate PDF and CSV reports to share"
         />
