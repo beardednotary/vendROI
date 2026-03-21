@@ -102,38 +102,44 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
         ))}
       </ScrollView>
 
-      <Animated.View style={[styles.content, { opacity: fadeAnim }]}>
-        {slide ? (
-          <>
-            <Text style={styles.emoji}>{slide.emoji}</Text>
-            <Text style={styles.title}>{slide.title}</Text>
-            <Text style={styles.description}>{slide.description}</Text>
-          </>
-        ) : (
-          <>
-            <Text style={styles.emoji}>🤝</Text>
-            <Text style={styles.title}>Help Fellow Operators</Text>
-            <Text style={styles.description}>
-              Share anonymous data (costs, revenue, locations) to help build industry benchmarks. No personal info is ever collected.
-            </Text>
-
-            <View style={styles.optInRow}>
-              <Switch
-                value={dataOptIn}
-                onValueChange={setDataOptIn}
-                trackColor={{ false: colors.border, true: colors.accentProfit }}
-                thumbColor={colors.textPrimary}
-              />
-              <Text style={styles.optInLabel}>
-                {dataOptIn ? 'Opted in — thank you!' : 'Opt into anonymous benchmarks'}
+      <Animated.View style={[styles.contentWrapper, { opacity: fadeAnim }]}>
+        <ScrollView
+          contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}
+          bounces={false}
+        >
+          {slide ? (
+            <>
+              <Text style={styles.emoji}>{slide.emoji}</Text>
+              <Text style={styles.title}>{slide.title}</Text>
+              <Text style={styles.description}>{slide.description}</Text>
+            </>
+          ) : (
+            <>
+              <Text style={styles.emoji}>🤝</Text>
+              <Text style={styles.title}>Help Fellow Operators</Text>
+              <Text style={styles.description}>
+                Share anonymous data (costs, revenue, locations) to help build industry benchmarks. No personal info is ever collected.
               </Text>
-            </View>
 
-            <Text style={styles.optInDetail}>
-              You can change this anytime in settings.
-            </Text>
-          </>
-        )}
+              <View style={styles.optInRow}>
+                <Switch
+                  value={dataOptIn}
+                  onValueChange={setDataOptIn}
+                  trackColor={{ false: colors.border, true: colors.accentProfit }}
+                  thumbColor={colors.textPrimary}
+                />
+                <Text style={styles.optInLabel}>
+                  {dataOptIn ? 'Opted in — thank you!' : 'Opt into anonymous benchmarks'}
+                </Text>
+              </View>
+
+              <Text style={styles.optInDetail}>
+                You can change this anytime in settings.
+              </Text>
+            </>
+          )}
+        </ScrollView>
       </Animated.View>
 
       <View style={styles.footer}>
@@ -182,11 +188,15 @@ const styles = StyleSheet.create({
   slide: {
     width,
   },
-  content: {
+  contentWrapper: {
     flex: 1,
+  },
+  content: {
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.lg,
   },
   emoji: {
     fontSize: 80,

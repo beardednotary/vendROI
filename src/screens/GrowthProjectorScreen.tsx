@@ -418,6 +418,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   content: {
+    paddingHorizontal: spacing.lg,
     paddingBottom: spacing.xxl * 2,
   },
   errorText: {
