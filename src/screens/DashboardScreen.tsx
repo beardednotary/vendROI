@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   TextInput,
 } from 'react-native';
+import { createBlankDashboard } from '../utils/sampleData';
 import { useAppStore } from '../store/useAppStore';
 import { Input } from '../components/Input';
 import { Button } from '../components/Button';
@@ -31,13 +32,17 @@ export const DashboardScreen: React.FC = () => {
     dashboards,
     addDashboard,
     updateDashboard,
+    deleteDashboard,
     locationComparisons,
     productMixes,
     growthProjectors,
     isPremium,
+    activeDashboardId,
+    setActiveDashboardId,
+    totalMachinesCreated,
   } = useAppStore();
   const [showPaywall, setShowPaywall] = useState(false);
-  const currentDashboard = dashboards[0];
+  const currentDashboard = dashboards.find((d) => d.id === activeDashboardId) ?? dashboards[0];
   const currentLocationComparison = locationComparisons.find(
     (comparison) => comparison.dashboardId === currentDashboard?.id
   );
@@ -82,6 +87,59 @@ export const DashboardScreen: React.FC = () => {
     averageSalePrice: '0',
     daysOperatingPerMonth: '30',
   });
+
+  // Load store data into local state when active machine changes (or on first mount)
+  useEffect(() => {
+    if (!currentDashboard) return;
+    setName(currentDashboard.name);
+    setInitialInvestment({
+      machineCost: String(currentDashboard.initialInvestment.machineCost || 0),
+      installationDelivery: String(currentDashboard.initialInvestment.installationDelivery || 0),
+      initialInventory: String(currentDashboard.initialInvestment.initialInventory || 0),
+      licensesPermits: String(currentDashboard.initialInvestment.licensesPermits || 0),
+    });
+    setOperatingCosts({
+      productRestock: String(currentDashboard.operatingCosts.productRestock || 0),
+      transportationFuel: String(currentDashboard.operatingCosts.transportationFuel || 0),
+      maintenance: String(currentDashboard.operatingCosts.maintenance || 0),
+      locationRent: String(currentDashboard.operatingCosts.locationRent || 0),
+      creditCardFees: String(currentDashboard.operatingCosts.creditCardFees || 0),
+      otherExpenses: String(currentDashboard.operatingCosts.otherExpenses || 0),
+    });
+    setRevenue({
+      itemsSoldPerDay: String(currentDashboard.revenue.itemsSoldPerDay || 0),
+      averageSalePrice: String(currentDashboard.revenue.averageSalePrice || 0),
+      daysOperatingPerMonth: String(currentDashboard.revenue.daysOperatingPerMonth || 30),
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentDashboard?.id]);
+
+  // Add a new machine (gated behind Pro for 2nd+ machine)
+  const handleAddMachine = () => {
+    if (isPremium) {
+      addDashboard(createBlankDashboard());
+    } else if (totalMachinesCreated >= 1) {
+      setShowPaywall(true);
+    } else {
+      addDashboard(createBlankDashboard());
+    }
+  };
+
+  // Delete a machine (with guard: can’t delete the last one)
+  const handleDeleteMachine = (id: string, machineName: string) => {
+    if (dashboards.length === 1) {
+      Alert.alert("Can’t Delete", ‘You must keep at least one machine.’);
+      return;
+    }
+    Alert.alert(
+      ‘Delete Machine’,
+      `Delete "${machineName}"? This cannot be undone.`,
+      [
+        { text: ‘Cancel’, style: ‘cancel’ },
+        { text: ‘Delete’, style: ‘destructive’, onPress: () => deleteDashboard(id) },
+      ]
+    );
+  };
 
   // Clear "0" on focus so the user doesn’t have to delete it
   const onFocusClearZero =
@@ -274,14 +332,52 @@ const getBreakEvenColor = (months: number) => {
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag"
     >
+      {/* Machine switcher */}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.machineSwitcher}
+        contentContainerStyle={styles.machineSwitcherContent}
+      >
+        {dashboards.map((d) => (
+          <TouchableOpacity
+            key={d.id}
+            onPress={() => setActiveDashboardId(d.id)}
+            onLongPress={() => handleDeleteMachine(d.id, d.name)}
+            style={[
+              styles.machinePill,
+              (activeDashboardId === d.id || (!activeDashboardId && d === dashboards[0])) &&
+                styles.machinePillActive,
+            ]}
+          >
+            <Text
+              numberOfLines={1}
+              style={[
+                styles.machinePillText,
+                (activeDashboardId === d.id || (!activeDashboardId && d === dashboards[0])) &&
+                  styles.machinePillTextActive,
+              ]}
+            >
+              {d.name}
+            </Text>
+          </TouchableOpacity>
+        ))}
+        <TouchableOpacity onPress={handleAddMachine} style={styles.machinePillAdd}>
+          <Text style={styles.machinePillAddText}>+</Text>
+        </TouchableOpacity>
+      </ScrollView>
+
 {isEditingName ? (
   <TextInput
     value={name}
     onChangeText={setName}
-    onBlur={() => setIsEditingName(false)}
+    onBlur={() => {
+      setIsEditingName(false);
+      if (currentDashboard) updateDashboard(currentDashboard.id, { name });
+    }}
     autoFocus
     style={styles.projectNameInput}
-    placeholder="Project name"
+    placeholder="Machine name"
     placeholderTextColor={colors.muted}
   />
 ) : (
@@ -1035,5 +1131,50 @@ verdictPayback: {
   fontSize: 14,
   fontWeight: '700',
   marginTop: spacing.md,
+},
+machineSwitcher: {
+  marginBottom: spacing.lg,
+},
+machineSwitcherContent: {
+  flexDirection: 'row',
+  gap: spacing.sm,
+  paddingVertical: spacing.xs,
+  alignItems: 'center',
+},
+machinePill: {
+  paddingHorizontal: spacing.md,
+  paddingVertical: spacing.sm,
+  borderRadius: 999,
+  borderWidth: 1,
+  borderColor: colors.border,
+  backgroundColor: colors.surface,
+  maxWidth: 160,
+},
+machinePillActive: {
+  borderColor: colors.accentPrimary,
+  backgroundColor: colors.accentPrimary + '20',
+},
+machinePillText: {
+  fontSize: 13,
+  fontWeight: '600',
+  color: colors.textSecondary,
+},
+machinePillTextActive: {
+  color: colors.accentPrimary,
+},
+machinePillAdd: {
+  width: 34,
+  height: 34,
+  borderRadius: 999,
+  borderWidth: 1,
+  borderColor: colors.border,
+  backgroundColor: colors.surface,
+  alignItems: 'center',
+  justifyContent: 'center',
+},
+machinePillAddText: {
+  fontSize: 22,
+  lineHeight: 26,
+  color: colors.textSecondary,
 },
 });

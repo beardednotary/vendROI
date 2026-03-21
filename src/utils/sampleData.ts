@@ -2,6 +2,33 @@
 
 import { DashboardData } from '../types';
 
+export const createBlankDashboard = (name: string = 'New Machine'): DashboardData => ({
+  id: `machine-${Date.now()}`,
+  name,
+  initialInvestment: {
+    machineCost: 0,
+    installationDelivery: 0,
+    initialInventory: 0,
+    licensesPermits: 0,
+  },
+  operatingCosts: {
+    productRestock: 0,
+    transportationFuel: 0,
+    maintenance: 0,
+    locationRent: 0,
+    creditCardFees: 0,
+    otherExpenses: 0,
+  },
+  revenue: {
+    itemsSoldPerDay: 0,
+    averageSalePrice: 0,
+    daysOperatingPerMonth: 30,
+  },
+  revenueSource: 'manual',
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+});
+
 export const createSampleDashboard = (): DashboardData => {
   return {
     id: 'sample-dashboard',

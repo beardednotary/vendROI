@@ -13,38 +13,45 @@ const debouncedSave = (saveFn: () => Promise<void>) => {
   if (saveTimeout) clearTimeout(saveTimeout);
   saveTimeout = setTimeout(() => {
     saveFn();
-  }, 500); // Wait 500ms after last keystroke before saving
+  }, 500);
 };
 
 interface AppStore extends AppData {
   // Onboarding
   hasCompletedOnboarding: boolean;
   setHasCompletedOnboarding: (value: boolean) => void;
-  
+
   // Actions
   loadData: () => Promise<void>;
   saveData: () => Promise<void>;
-  
+
   // Dashboard
   addDashboard: (dashboard: DashboardData) => void;
   updateDashboard: (id: string, dashboard: Partial<DashboardData>) => void;
   deleteDashboard: (id: string) => void;
-  
+
+  // Active machine
+  activeDashboardId: string | null;
+  setActiveDashboardId: (id: string) => void;
+
+  // Paywall gate counter (never decremented)
+  totalMachinesCreated: number;
+
   // Product Mix
   addProductMix: (productMix: ProductMixData) => void;
   updateProductMix: (id: string, productMix: Partial<ProductMixData>) => void;
   deleteProductMix: (id: string) => void;
-  
+
   // Location Comparison
   addLocationComparison: (locationComparison: LocationComparisonData) => void;
   updateLocationComparison: (id: string, locationComparison: Partial<LocationComparisonData>) => void;
   deleteLocationComparison: (id: string) => void;
-  
+
   // Growth Projector
   addGrowthProjector: (growthProjector: GrowthProjectorData) => void;
   updateGrowthProjector: (id: string, growthProjector: Partial<GrowthProjectorData>) => void;
   deleteGrowthProjector: (id: string) => void;
-  
+
   // Premium
   setPremium: (isPremium: boolean) => void;
 
@@ -60,15 +67,21 @@ export const useAppStore = create<AppStore>((set, get) => ({
   isPremium: false,
   dataOptIn: false,
   hasCompletedOnboarding: false,
+  activeDashboardId: null,
+  totalMachinesCreated: 0,
 
   loadData: async () => {
     try {
       const jsonValue = await AsyncStorage.getItem(STORAGE_KEY);
       if (jsonValue != null) {
         const data: AppData = JSON.parse(jsonValue);
-        set(data);
+        // Migration: if activeDashboardId not stored, default to first dashboard
+        const activeDashboardId = data.activeDashboardId ?? data.dashboards[0]?.id ?? null;
+        // Migration: if totalMachinesCreated not stored, default to dashboards.length
+        const totalMachinesCreated = data.totalMachinesCreated ?? data.dashboards.length;
+        set({ ...data, activeDashboardId, totalMachinesCreated });
       }
-      
+
       // Load onboarding status
       const onboardingStatus = await AsyncStorage.getItem(ONBOARDING_KEY);
       if (onboardingStatus) {
@@ -89,6 +102,8 @@ export const useAppStore = create<AppStore>((set, get) => ({
         growthProjectors: state.growthProjectors,
         isPremium: state.isPremium,
         dataOptIn: state.dataOptIn,
+        activeDashboardId: state.activeDashboardId ?? undefined,
+        totalMachinesCreated: state.totalMachinesCreated,
       };
       const jsonValue = JSON.stringify(dataToSave);
       await AsyncStorage.setItem(STORAGE_KEY, jsonValue);
@@ -110,6 +125,8 @@ export const useAppStore = create<AppStore>((set, get) => ({
   addDashboard: (dashboard) => {
     set((state) => ({
       dashboards: [...state.dashboards, dashboard],
+      activeDashboardId: dashboard.id,
+      totalMachinesCreated: state.totalMachinesCreated + 1,
     }));
     debouncedSave(get().saveData);
   },
@@ -124,13 +141,26 @@ export const useAppStore = create<AppStore>((set, get) => ({
   },
 
   deleteDashboard: (id) => {
-    set((state) => ({
-      dashboards: state.dashboards.filter((d) => d.id !== id),
-      productMixes: state.productMixes.filter((p) => p.dashboardId !== id),
-      locationComparisons: state.locationComparisons.filter((l) => l.dashboardId !== id),
-      growthProjectors: state.growthProjectors.filter((g) => g.dashboardId !== id),
-    }));
-    get().saveData(); // Immediate save for deletes
+    set((state) => {
+      const remaining = state.dashboards.filter((d) => d.id !== id);
+      const newActiveId =
+        state.activeDashboardId === id
+          ? (remaining[0]?.id ?? null)
+          : state.activeDashboardId;
+      return {
+        dashboards: remaining,
+        productMixes: state.productMixes.filter((p) => p.dashboardId !== id),
+        locationComparisons: state.locationComparisons.filter((l) => l.dashboardId !== id),
+        growthProjectors: state.growthProjectors.filter((g) => g.dashboardId !== id),
+        activeDashboardId: newActiveId,
+      };
+    });
+    get().saveData();
+  },
+
+  setActiveDashboardId: (id) => {
+    set({ activeDashboardId: id });
+    debouncedSave(get().saveData);
   },
 
   // Product Mix actions
@@ -154,7 +184,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
     set((state) => ({
       productMixes: state.productMixes.filter((p) => p.id !== id),
     }));
-    get().saveData(); // Immediate save for deletes
+    get().saveData();
   },
 
   // Location Comparison actions
@@ -178,7 +208,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
     set((state) => ({
       locationComparisons: state.locationComparisons.filter((l) => l.id !== id),
     }));
-    get().saveData(); // Immediate save for deletes
+    get().saveData();
   },
 
   // Growth Projector actions
@@ -202,7 +232,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
     set((state) => ({
       growthProjectors: state.growthProjectors.filter((g) => g.id !== id),
     }));
-    get().saveData(); // Immediate save for deletes
+    get().saveData();
   },
 
   // Premium

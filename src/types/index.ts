@@ -142,6 +142,8 @@ export interface AppData {
   growthProjectors: GrowthProjectorData[];
   isPremium: boolean;
   dataOptIn: boolean;
+  activeDashboardId?: string;
+  totalMachinesCreated?: number;
 }
 
 export interface ExportData {
