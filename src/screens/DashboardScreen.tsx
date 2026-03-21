@@ -132,11 +132,11 @@ export const DashboardScreen: React.FC = () => {
       return;
     }
     Alert.alert(
-      ‘Delete Machine’,
+      "Delete Machine",
       `Delete "${machineName}"? This cannot be undone.`,
       [
-        { text: ‘Cancel’, style: ‘cancel’ },
-        { text: ‘Delete’, style: ‘destructive’, onPress: () => deleteDashboard(id) },
+        { text: "Cancel", style: "cancel" },
+        { text: "Delete", style: "destructive", onPress: () => deleteDashboard(id) },
       ]
     );
   };
