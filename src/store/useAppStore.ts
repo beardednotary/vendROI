@@ -75,11 +75,18 @@ export const useAppStore = create<AppStore>((set, get) => ({
       const jsonValue = await AsyncStorage.getItem(STORAGE_KEY);
       if (jsonValue != null) {
         const data: AppData = JSON.parse(jsonValue);
+        // Migration: deduplicate dashboards by ID
+        const seen = new Set<string>();
+        const dashboards = (data.dashboards || []).filter(d => {
+          if (seen.has(d.id)) return false;
+          seen.add(d.id);
+          return true;
+        });
         // Migration: if activeDashboardId not stored, default to first dashboard
-        const activeDashboardId = data.activeDashboardId ?? data.dashboards[0]?.id ?? null;
+        const activeDashboardId = data.activeDashboardId ?? dashboards[0]?.id ?? null;
         // Migration: if totalMachinesCreated not stored, default to dashboards.length
-        const totalMachinesCreated = data.totalMachinesCreated ?? data.dashboards.length;
-        set({ ...data, activeDashboardId, totalMachinesCreated });
+        const totalMachinesCreated = data.totalMachinesCreated ?? dashboards.length;
+        set({ ...data, dashboards, activeDashboardId, totalMachinesCreated });
       }
 
       // Load onboarding status
