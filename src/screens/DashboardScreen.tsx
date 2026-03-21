@@ -128,7 +128,7 @@ export const DashboardScreen: React.FC = () => {
   // Delete a machine (with guard: can’t delete the last one)
   const handleDeleteMachine = (id: string, machineName: string) => {
     if (dashboards.length === 1) {
-      Alert.alert("Can’t Delete", ‘You must keep at least one machine.’);
+      Alert.alert("Can’t Delete", "You must keep at least one machine.");
       return;
     }
     Alert.alert(
