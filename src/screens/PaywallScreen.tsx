@@ -8,6 +8,8 @@ import {
   StyleSheet,
   ActivityIndicator,
   Alert,
+  TouchableOpacity,
+  Linking,
 } from 'react-native';
 import Purchases, { PurchasesOffering } from 'react-native-purchases';
 import { Button } from '../components/Button';
@@ -214,6 +216,16 @@ export const PaywallScreen: React.FC<PaywallScreenProps> = ({
         One-time purchase. All features unlocked forever.{'\n'}
         No subscriptions. No recurring charges.
       </Text>
+
+      <View style={styles.legalLinks}>
+        <TouchableOpacity onPress={() => Linking.openURL('https://vendroi.com/privacy')}>
+          <Text style={styles.legalLink}>Privacy Policy</Text>
+        </TouchableOpacity>
+        <Text style={styles.legalSeparator}> · </Text>
+        <TouchableOpacity onPress={() => Linking.openURL('https://www.apple.com/legal/internet-services/itunes/dev/stdeula/')}>
+          <Text style={styles.legalLink}>Terms of Use</Text>
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 };
@@ -333,6 +345,22 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: colors.muted,
     lineHeight: 18,
+  },
+  legalLinks: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: spacing.md,
+    marginBottom: spacing.xl,
+  },
+  legalLink: {
+    fontSize: 12,
+    color: colors.muted,
+    textDecorationLine: 'underline',
+  },
+  legalSeparator: {
+    fontSize: 12,
+    color: colors.muted,
   },
 });
 
