@@ -197,6 +197,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: spacing.xl,
     paddingVertical: spacing.lg,
+    maxWidth: 680,
+    alignSelf: 'center',
+    width: '100%',
   },
   emoji: {
     fontSize: 80,

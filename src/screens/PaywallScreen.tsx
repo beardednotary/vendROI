@@ -251,6 +251,9 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: spacing.xl,
+    maxWidth: 680,
+    alignSelf: 'center',
+    width: '100%',
   },
   loadingContainer: {
     flex: 1,

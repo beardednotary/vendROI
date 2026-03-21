@@ -467,6 +467,9 @@ const styles = StyleSheet.create({
   content: {
     padding: spacing.lg,
     paddingBottom: spacing.xxl * 2,
+    maxWidth: 680,
+    alignSelf: 'center',
+    width: '100%',
   },
   errorText: {
     ...textVariants.body,
