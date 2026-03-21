@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { TrustBar } from '@/components/TrustBar';
+import { AndroidWaitlistButton } from '@/components/AndroidWaitlistButton';
 
 export function Hero() {
   return (
@@ -33,14 +34,7 @@ export function Hero() {
                 Download on iOS
               </a>
 
-              <a
-                href="#"
-                className="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-2xl
-                           bg-vr-surface border border-vr-border text-vr-text font-semibold text-base sm:text-lg
-                           hover:border-vr-orange/50 transition-all"
-              >
-                Android Waitlist
-              </a>
+              <AndroidWaitlistButton className="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-2xl bg-vr-surface border border-vr-border text-vr-text font-semibold text-base sm:text-lg hover:border-vr-orange/50 transition-all" />
             </div>
 
             <p className="mt-3 text-vr-muted text-sm">
