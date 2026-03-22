@@ -10,7 +10,10 @@
       "Bash(git add website/src/components/Footer.tsx website/src/components/Pricing.tsx website/src/app/terms/page.tsx website/src/app/privacy/page.tsx website/src/app/support/page.tsx)",
       "Bash(git commit -m \"Footer DahVio credit, email support, support@vendroi.com, price $29.99 in terms\")",
       "Bash(git add website/src/components/Hero.tsx website/src/components/TrustBar.tsx website/src/components/FAQ.tsx website/src/components/Navbar.tsx website/src/app/page.tsx)",
-      "Bash(git commit -m \"Trust bar in hero, fix double render, fix navbar links from legal pages\")"
+      "Bash(git commit -m \"Trust bar in hero, fix double render, fix navbar links from legal pages\")",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(python3 -c \":*)"
     ]
   }
 }
