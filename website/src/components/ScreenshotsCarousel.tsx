@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 
 const slides = [
-  { label: 'Investment Verdict', description: 'STRONG · ROI 52% · Payback 8 mo', src: '/images/Investment-Verdict.png' },
+  { label: 'Investment Verdict', description: 'STRONG · ROI 119% · Payback 10.1 mo', src: '/images/Investment-Verdict.png' },
   { label: 'Location Comparison', description: 'Side-by-side scoring across locations', src: '/images/Location-Comparison.png' },
   { label: 'Payback Timeline', description: 'Month-by-month break-even projection', src: '/images/Payback-Timeline.png' },
   { label: 'Product Mix', description: 'Margin by product, optimized for return', src: '/images/Product-Mix.png' },
