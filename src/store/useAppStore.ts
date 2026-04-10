@@ -37,6 +37,10 @@ interface AppStore extends AppData {
   // Paywall gate counter (never decremented)
   totalMachinesCreated: number;
 
+  // Review trigger counter — incremented each time user views a dashboard session
+  totalDashboardSessions: number;
+  incrementDashboardSessions: () => void;
+
   // Product Mix
   addProductMix: (productMix: ProductMixData) => void;
   updateProductMix: (id: string, productMix: Partial<ProductMixData>) => void;
@@ -69,6 +73,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
   hasCompletedOnboarding: false,
   activeDashboardId: null,
   totalMachinesCreated: 0,
+  totalDashboardSessions: 0,
 
   loadData: async () => {
     try {
@@ -168,6 +173,10 @@ export const useAppStore = create<AppStore>((set, get) => ({
   setActiveDashboardId: (id) => {
     set({ activeDashboardId: id });
     debouncedSave(get().saveData);
+  },
+
+  incrementDashboardSessions: () => {
+    set((state) => ({ totalDashboardSessions: state.totalDashboardSessions + 1 }));
   },
 
   // Product Mix actions

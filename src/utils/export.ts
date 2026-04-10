@@ -3,6 +3,7 @@
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import * as Print from 'expo-print';
+import { maybeRequestReview } from './storeReview';
 
 import {
   DashboardData,
@@ -673,6 +674,7 @@ export async function exportFullProjectToCSV(
   }
 
   await saveAndShareFile(csv, fileName, `${dashboard.name} Full Export`);
+  maybeRequestReview();
 }
 
 export async function exportFullProjectToPDF(
@@ -806,4 +808,5 @@ export async function exportFullProjectToPDF(
     dialogTitle: `${dashboard.name} Full Export`,
     UTI: 'com.adobe.pdf',
   });
+  maybeRequestReview();
 }

@@ -26,6 +26,7 @@ import { PaywallScreen } from './PaywallScreen';
 import { exportFullProjectToCSV, exportFullProjectToPDF } from '../utils/export';
 import { Toast } from '../utils/toast';
 import { REVENUECAT_CONFIG } from '../config/revenueCat';
+import { maybeRequestReview } from '../utils/storeReview';
 
 export const DashboardScreen: React.FC = () => {
   const {
@@ -40,6 +41,8 @@ export const DashboardScreen: React.FC = () => {
     activeDashboardId,
     setActiveDashboardId,
     totalMachinesCreated,
+    totalDashboardSessions,
+    incrementDashboardSessions,
   } = useAppStore();
   const [showPaywall, setShowPaywall] = useState(false);
   const currentDashboard = dashboards.find((d) => d.id === activeDashboardId) ?? dashboards[0];
@@ -113,6 +116,20 @@ export const DashboardScreen: React.FC = () => {
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentDashboard?.id]);
+
+  // Increment session count each time the user views a different dashboard
+  useEffect(() => {
+    if (!currentDashboard?.id) return;
+    incrementDashboardSessions();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentDashboard?.id]);
+
+  // Review triggers: 3rd machine created, or 3rd dashboard session viewed
+  useEffect(() => {
+    if (totalMachinesCreated >= 3 || totalDashboardSessions >= 3) {
+      maybeRequestReview();
+    }
+  }, [totalMachinesCreated, totalDashboardSessions]);
 
   // Add a new machine (gated behind Pro for 2nd+ machine)
   const handleAddMachine = () => {
