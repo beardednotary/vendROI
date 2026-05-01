@@ -148,9 +148,9 @@ export const PaywallScreen: React.FC<PaywallScreenProps> = ({
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.header}>
-        <Text style={styles.title}>Unlock Pro</Text>
+        <Text style={styles.title}>Don't buy a bad machine</Text>
         <Text style={styles.subtitle}>
-          Get full access to all ROI calculation tools
+          This takes 30 seconds now… or costs you $3,000 later
         </Text>
         {offeringLoadFailed && (
           <Text style={styles.warningText}>
@@ -159,26 +159,35 @@ export const PaywallScreen: React.FC<PaywallScreenProps> = ({
         )}
       </View>
 
+      <Text style={styles.sectionLabel}>WHAT YOU'RE MISSING</Text>
+      <View style={styles.lockedSection}>
+        <LockedRow label="Risk Level" placeholder="████  HIGH" />
+        <LockedRow label="Profit After All Costs" placeholder="$???" />
+        <LockedRow label="Location Verdict" placeholder='"This setup likely und…"' />
+        <LockedRow label="Machines to Hit Your Goal" placeholder="??? machines" />
+      </View>
+
+      <Text style={styles.sectionLabel}>WHAT YOU UNLOCK</Text>
       <View style={styles.featuresSection}>
         <Feature
           icon="📍"
           title="Location Comparison"
-          description="Score and compare up to 10 potential locations"
+          description="Find out which location actually makes money — before you sign a contract"
         />
         <Feature
           icon="🛒"
           title="Product Mix Optimizer"
-          description="Track profitability of up to 10 products"
+          description="See exactly which products drive profit and which eat into your margins"
         />
         <Feature
           icon="📈"
           title="Growth Projector"
-          description="Model your 12-month expansion strategy"
+          description="Model how fast you can scale — and what it will actually cost"
         />
         <Feature
           icon="📊"
           title="Export Reports"
-          description="Generate PDF and CSV reports to share"
+          description="Share your full analysis as a PDF or CSV"
         />
       </View>
 
@@ -186,13 +195,17 @@ export const PaywallScreen: React.FC<PaywallScreenProps> = ({
         <Text style={styles.priceLabel}>One-time payment</Text>
         <Text style={styles.price}>{price}</Text>
         <Text style={styles.priceSubtext}>
-          Lifetime access - No subscriptions
+          Lifetime access · No subscriptions
         </Text>
       </View>
 
+      <Text style={styles.preButtonLine}>
+        Most people only realize this after they've already bought the machine.
+      </Text>
+
       <View style={styles.buttons}>
         <Button
-          title={purchasing ? 'Processing...' : `Unlock Pro - ${price}`}
+          title={purchasing ? 'Processing...' : `Run Full Breakdown — ${price}`}
           onPress={handlePurchase}
           disabled={purchasing}
           style={styles.purchaseButton}
@@ -229,6 +242,16 @@ export const PaywallScreen: React.FC<PaywallScreenProps> = ({
     </ScrollView>
   );
 };
+
+const LockedRow: React.FC<{ label: string; placeholder: string }> = ({ label, placeholder }) => (
+  <View style={styles.lockedRow}>
+    <Text style={styles.lockedLabel}>{label}</Text>
+    <View style={styles.lockedRight}>
+      <Text style={styles.lockedPlaceholder}>{placeholder}</Text>
+      <Text style={styles.lockIcon}>🔒</Text>
+    </View>
+  </View>
+);
 
 const Feature: React.FC<{
   icon: string;
@@ -280,6 +303,49 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
     textAlign: 'center',
     color: colors.accentRisk,
+  },
+  sectionLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 2,
+    color: colors.muted,
+    marginBottom: spacing.md,
+  },
+  lockedSection: {
+    marginBottom: spacing.xxl,
+    borderRadius: radii.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    overflow: 'hidden',
+  },
+  lockedRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: spacing.lg,
+    backgroundColor: colors.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  lockedLabel: {
+    ...textVariants.body,
+    fontSize: 14,
+    color: colors.textSecondary,
+    flex: 1,
+  },
+  lockedRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  lockedPlaceholder: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.muted,
+    opacity: 0.5,
+  },
+  lockIcon: {
+    fontSize: 14,
   },
   featuresSection: {
     marginBottom: spacing.xxl,
@@ -334,6 +400,14 @@ const styles = StyleSheet.create({
     ...textVariants.body,
     fontSize: 14,
     color: colors.textSecondary,
+  },
+  preButtonLine: {
+    ...textVariants.body,
+    fontSize: 13,
+    textAlign: 'center',
+    color: colors.textSecondary,
+    fontStyle: 'italic',
+    marginBottom: spacing.lg,
   },
   buttons: {
     gap: spacing.md,

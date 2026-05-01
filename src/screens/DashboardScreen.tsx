@@ -58,6 +58,9 @@ export const DashboardScreen: React.FC = () => {
   
   const [name, setName] = useState('My First Machine');
   const [isEditingName, setIsEditingName] = useState(false);
+  const [whatIfSalesPerDay, setWhatIfSalesPerDay] = useState<number | null>(null);
+
+  const SALES_PRESETS = [5, 10, 15, 20, 25, 30];
   
   const scrollRef = useRef<ScrollView | null>(null);
   const [sectionPositions, setSectionPositions] = useState<{
@@ -277,6 +280,26 @@ const getBreakEvenColor = (months: number) => {
 
   const verdict = getVerdict();
 
+  const getVerdictLine = (): string | null => {
+    if (totalInitialInvestment === 0) return null;
+    const breakEvenDays = Math.round(breakEvenMonths * 30);
+    if (monthlyNetProfit <= 0) {
+      return "Every month this machine runs, you lose money. The numbers need to change before this is worth pursuing.";
+    }
+    if (breakEvenMonths > 24) {
+      return `That's roughly ${breakEvenDays.toLocaleString()} days of sales just to get your money back. Most operators don't last that long.`;
+    }
+    if (roiPercentage >= 50 && breakEvenMonths <= 12) {
+      return `You'd recover your full investment in about ${breakEvenMonths.toFixed(0)} months — then keep ${formatCurrency(monthlyNetProfit)} every month after that. This is worth scaling.`;
+    }
+    if (roiPercentage >= 25) {
+      return `At this pace you'd break even in ${breakEvenMonths.toFixed(0)} months and earn roughly ${formatCurrency(annualNetProfit)} in year one.`;
+    }
+    return "Viable — but thin margins leave little room for slow months or surprise costs.";
+  };
+
+  const verdictLine = getVerdictLine();
+
   // Payback date
   const getPaybackDate = () => {
     if (breakEvenMonths <= 0 || breakEvenMonths > 100) return null;
@@ -286,6 +309,11 @@ const getBreakEvenColor = (months: number) => {
   };
 
   const paybackDate = getPaybackDate();
+
+  const whatIfMonthlyProfit = whatIfSalesPerDay !== null
+    ? (whatIfSalesPerDay * num.averageSalePrice * num.daysOperatingPerMonth) - totalMonthlyCosts
+    : null;
+  const whatIfDelta = whatIfMonthlyProfit !== null ? whatIfMonthlyProfit - monthlyNetProfit : null;
 
   // ---------------- METRIC CARD ----------------
 
@@ -875,6 +903,9 @@ const getBreakEvenColor = (months: number) => {
           <Text style={styles.verdictEmoji}>{verdict.emoji}</Text>
           <Text style={[styles.verdictLabel, { color: verdict.color }]}>{verdict.label}</Text>
           <Text style={styles.verdictMessage}>{verdict.message}</Text>
+          {verdictLine && (
+            <Text style={styles.verdictLine}>{verdictLine}</Text>
+          )}
           {paybackDate && (
             <Text style={[styles.verdictPayback, { color: verdict.color }]}>
               Payback by {paybackDate}
@@ -936,15 +967,72 @@ const getBreakEvenColor = (months: number) => {
         </View>
       </View>
 
+      {/* WHAT IF SECTION */}
+      {num.averageSalePrice > 0 && (
+        <View style={styles.whatIfSection}>
+          <Text style={styles.whatIfLabel}>WHAT IF YOU SOLD MORE?</Text>
+          <Text style={styles.whatIfSubtitle}>
+            Tap a number to see your profit at that sales volume
+          </Text>
+          <View style={styles.presetsRow}>
+            {SALES_PRESETS.map(preset => {
+              const isCurrent = Math.round(num.itemsSoldPerDay) === preset;
+              const isSelected = whatIfSalesPerDay === preset;
+              return (
+                <TouchableOpacity
+                  key={preset}
+                  style={[
+                    styles.presetButton,
+                    isCurrent && styles.presetButtonCurrent,
+                    isSelected && styles.presetButtonActive,
+                  ]}
+                  onPress={() => setWhatIfSalesPerDay(prev => prev === preset ? null : preset)}
+                >
+                  <Text style={[
+                    styles.presetButtonText,
+                    isSelected && styles.presetButtonTextActive,
+                  ]}>
+                    {preset}
+                  </Text>
+                  {isCurrent && <Text style={styles.presetCurrentDot}>▲</Text>}
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+          <Text style={styles.presetsAxisLabel}>sales / day</Text>
+
+          {whatIfSalesPerDay !== null && whatIfMonthlyProfit !== null && (
+            <View style={styles.whatIfResult}>
+              <Text style={styles.whatIfResultLabel}>
+                At {whatIfSalesPerDay} sales/day
+              </Text>
+              <Text style={[styles.whatIfResultValue, { color: getProfitColor(whatIfMonthlyProfit) }]}>
+                {formatCurrency(whatIfMonthlyProfit)}/month
+              </Text>
+              {whatIfDelta !== null && whatIfDelta !== 0 && (
+                <Text style={[
+                  styles.whatIfDelta,
+                  { color: whatIfDelta > 0 ? colors.accentProfit : colors.accentRisk },
+                ]}>
+                  {whatIfDelta > 0 ? '+' : ''}{formatCurrency(whatIfDelta)} vs. your current setup
+                </Text>
+              )}
+            </View>
+          )}
+        </View>
+      )}
+
       {/* UPGRADE SECTION */}
       {!isPremium && (
         <View style={styles.upgradeSection}>
-          <Text style={styles.upgradeTitle}>Want to optimize further?</Text>
+          <Text style={styles.upgradeTitle}>
+            This is where most people lose money.
+          </Text>
           <Text style={styles.upgradeText}>
-            Unlock Location Comparison, Product Mix Optimizer, and Growth Projector
+            The math looked fine… until it wasn't.
           </Text>
           <Button
-            title={`Unlock Pro - ${REVENUECAT_CONFIG.fallbackPrice}`}
+            title={`Run Full Breakdown — ${REVENUECAT_CONFIG.fallbackPrice}`}
             onPress={() => setShowPaywall(true)}
             style={styles.upgradeButton}
           />
@@ -1068,6 +1156,90 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: '900',
   },
+  whatIfSection: {
+    marginTop: spacing.xl,
+    marginBottom: spacing.xl,
+    padding: spacing.xl,
+    backgroundColor: colors.surface,
+    borderRadius: radii.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  whatIfLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 2,
+    color: colors.muted,
+    marginBottom: spacing.xs,
+  },
+  whatIfSubtitle: {
+    ...textVariants.body,
+    fontSize: 13,
+    color: colors.textSecondary,
+    marginBottom: spacing.lg,
+  },
+  presetsRow: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+    marginBottom: spacing.xs,
+  },
+  presetButton: {
+    flex: 1,
+    paddingVertical: spacing.sm,
+    alignItems: 'center',
+    borderRadius: radii.sm,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.background,
+  },
+  presetButtonCurrent: {
+    borderColor: colors.accentPrimary,
+  },
+  presetButtonActive: {
+    backgroundColor: colors.accentPrimary,
+    borderColor: colors.accentPrimary,
+  },
+  presetButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.textSecondary,
+  },
+  presetButtonTextActive: {
+    color: colors.background,
+  },
+  presetCurrentDot: {
+    fontSize: 6,
+    color: colors.accentPrimary,
+    marginTop: 2,
+  },
+  presetsAxisLabel: {
+    fontSize: 11,
+    color: colors.muted,
+    textAlign: 'center',
+    marginBottom: spacing.lg,
+  },
+  whatIfResult: {
+    alignItems: 'center',
+    paddingTop: spacing.lg,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+  },
+  whatIfResultLabel: {
+    ...textVariants.body,
+    fontSize: 13,
+    color: colors.textSecondary,
+    marginBottom: spacing.xs,
+  },
+  whatIfResultValue: {
+    fontSize: 32,
+    fontWeight: '900',
+    marginBottom: spacing.xs,
+  },
+  whatIfDelta: {
+    ...textVariants.body,
+    fontSize: 14,
+    fontWeight: '600',
+  },
   upgradeSection: {
     marginTop: spacing.xl,
     padding: spacing.xl,
@@ -1080,12 +1252,16 @@ const styles = StyleSheet.create({
   },
   upgradeTitle: {
     ...textVariants.subtitle,
+    textAlign: 'center',
     marginBottom: spacing.sm,
+    lineHeight: 24,
   },
   upgradeText: {
     ...textVariants.body,
     textAlign: 'center',
+    color: colors.textSecondary,
     marginBottom: spacing.lg,
+    lineHeight: 22,
   },
   upgradeButton: {
     width: '100%',
@@ -1146,6 +1322,15 @@ verdictMessage: {
   fontSize: 13,
   textAlign: 'center',
   color: colors.textSecondary,
+},
+verdictLine: {
+  ...textVariants.body,
+  fontSize: 14,
+  textAlign: 'center',
+  color: colors.textPrimary,
+  marginTop: spacing.md,
+  lineHeight: 22,
+  fontStyle: 'italic',
 },
 verdictPayback: {
   fontSize: 14,

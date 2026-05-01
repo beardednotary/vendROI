@@ -30,6 +30,7 @@ import {
 import { Location, LocationType, CompetitionLevel } from '../types';
 import Toast from 'react-native-toast-message';
 import { exportLocationsToCSV } from '../utils/export';
+import { LockedScreenOverlay } from '../components/LockedScreenOverlay';
 
 export const LocationComparisonScreen: React.FC = () => {
   const { 
@@ -56,26 +57,37 @@ export const LocationComparisonScreen: React.FC = () => {
   const currentDashboard = dashboards[0];
   const locationComparison = locationComparisons.find(lc => lc.dashboardId === currentDashboard?.id);
 
-  // Check premium access
-  useEffect(() => {
-    if (!isPremium) {
-      setShowPaywall(true);
-    }
-  }, [isPremium]);
-
   useEffect(() => {
     if (locationComparison) {
       setLocations(locationComparison.locations);
     }
   }, [locationComparison]);
 
-  // Show paywall if not premium
   if (showPaywall) {
     return (
       <PaywallScreen
         onDismiss={() => setShowPaywall(false)}
         onPurchaseSuccess={() => setShowPaywall(false)}
       />
+    );
+  }
+
+  if (!isPremium) {
+    return (
+      <View style={{ flex: 1, backgroundColor: colors.background }}>
+        <View pointerEvents="none" style={{ flex: 1, opacity: 0.18, padding: spacing.xl }}>
+          <Text style={styles.previewTitle}>Location Comparison</Text>
+          <Text style={styles.previewSubtitle}>Score and rank potential locations</Text>
+          {[...Array(3)].map((_, i) => (
+            <View key={i} style={styles.previewCard} />
+          ))}
+        </View>
+        <LockedScreenOverlay
+          title="Find your best location before you commit"
+          description="Score locations by foot traffic, rent, and competition. Know which one actually makes money before you sign anything."
+          onUnlock={() => setShowPaywall(true)}
+        />
+      </View>
     );
   }
 
@@ -582,6 +594,23 @@ export const LocationComparisonScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+  previewTitle: {
+    ...textVariants.title,
+    marginBottom: spacing.sm,
+  },
+  previewSubtitle: {
+    ...textVariants.body,
+    color: colors.textSecondary,
+    marginBottom: spacing.xl,
+  },
+  previewCard: {
+    height: 80,
+    backgroundColor: colors.surface,
+    borderRadius: radii.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    marginBottom: spacing.md,
+  },
   container: {
     flex: 1,
     backgroundColor: colors.background,

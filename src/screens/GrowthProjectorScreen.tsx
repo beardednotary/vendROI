@@ -23,6 +23,7 @@ import {
 } from '../utils/calculations';
 import { exportGrowthProjectionsToCSV } from '../utils/export';
 import { Toast } from '../utils/toast';
+import { LockedScreenOverlay } from '../components/LockedScreenOverlay';
 
 type GrowthStrategy = 'Linear' | 'Exponential' | 'Custom';
 
@@ -50,13 +51,6 @@ export const GrowthProjectorScreen = () => {
   const currentDashboard = dashboards[0];
   const growthProjector = growthProjectors.find(gp => gp.dashboardId === currentDashboard?.id);
 
-  // Check premium access
-useEffect(() => {
-  if (!isPremium) {
-    setShowPaywall(true);
-  }
-}, [isPremium]);
-  
   // Load data from store ONCE on mount
   useEffect(() => {
     if (growthProjector && !hasInitializedRef.current) {
@@ -105,14 +99,41 @@ useEffect(() => {
     }
   }, [growthStrategy, initialMachines, machinesPerQuarter, investmentPerMachine]);
 
-if (showPaywall) {
-  return (
-    <PaywallScreen
-      onDismiss={() => setShowPaywall(false)}
-      onPurchaseSuccess={() => setShowPaywall(false)}
-    />
-  );
-}
+  if (showPaywall) {
+    return (
+      <PaywallScreen
+        onDismiss={() => setShowPaywall(false)}
+        onPurchaseSuccess={() => setShowPaywall(false)}
+      />
+    );
+  }
+
+  if (!isPremium) {
+    return (
+      <View style={{ flex: 1, backgroundColor: colors.background }}>
+        <View pointerEvents="none" style={{ flex: 1, opacity: 0.18, padding: spacing.xl }}>
+          <Text style={styles.previewTitle}>Growth Projector</Text>
+          <Text style={styles.previewSubtitle}>Model your 12-month expansion</Text>
+          <View style={styles.previewGrid}>
+            {['Total Investment', 'Total Revenue', 'Net Profit', 'Portfolio ROI', 'Final Machines', 'Avg Monthly Profit'].map((label) => (
+              <View key={label} style={styles.previewMetricCard}>
+                <Text style={styles.previewMetricLabel}>{label}</Text>
+                <View style={styles.previewMetricValue} />
+              </View>
+            ))}
+          </View>
+          {[...Array(4)].map((_, i) => (
+            <View key={i} style={styles.previewTableRow} />
+          ))}
+        </View>
+        <LockedScreenOverlay
+          title="See your path to $1k/month"
+          description="Model 12 months of growth. See exactly what it costs to scale — and when it starts compounding."
+          onUnlock={() => setShowPaywall(true)}
+        />
+      </View>
+    );
+  }
 
   if (!currentDashboard) {
     return (
@@ -413,6 +434,49 @@ if (showPaywall) {
 };
 
 const styles = StyleSheet.create({
+  previewTitle: {
+    ...textVariants.title,
+    marginBottom: spacing.sm,
+  },
+  previewSubtitle: {
+    ...textVariants.body,
+    color: colors.textSecondary,
+    marginBottom: spacing.xl,
+  },
+  previewGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.md,
+    marginBottom: spacing.xl,
+  },
+  previewMetricCard: {
+    width: '47%',
+    backgroundColor: colors.surface,
+    borderRadius: radii.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    padding: spacing.md,
+    gap: spacing.sm,
+  },
+  previewMetricLabel: {
+    ...textVariants.body,
+    fontSize: 12,
+    color: colors.muted,
+  },
+  previewMetricValue: {
+    height: 24,
+    backgroundColor: colors.border,
+    borderRadius: radii.sm,
+    width: '70%',
+  },
+  previewTableRow: {
+    height: 36,
+    backgroundColor: colors.surface,
+    borderRadius: radii.sm,
+    marginBottom: spacing.xs,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
   container: {
     flex: 1,
     backgroundColor: colors.background,

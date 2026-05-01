@@ -26,6 +26,7 @@ import {
 import { Product } from '../types';
 import Toast from 'react-native-toast-message';
 import { exportProductMixToCSV } from '../utils/export';
+import { LockedScreenOverlay } from '../components/LockedScreenOverlay';
 
 export const ProductMixScreen = () => {
   const { dashboards, productMixes, addProductMix, updateProductMix, isPremium } = useAppStore();
@@ -47,13 +48,6 @@ const [showPaywall, setShowPaywall] = useState(false);
   const currentDashboard = dashboards[0];
   const productMix = productMixes.find(pm => pm.dashboardId === currentDashboard?.id);
 
-  // Check premium access
-useEffect(() => {
-  if (!isPremium) {
-    setShowPaywall(true);
-  }
-}, [isPremium]);
-  
   useEffect(() => {
     if (productMix) {
       setProducts(productMix.products);
@@ -61,13 +55,32 @@ useEffect(() => {
   }, [productMix]);
 
   if (showPaywall) {
-  return (
-    <PaywallScreen
-      onDismiss={() => setShowPaywall(false)}
-      onPurchaseSuccess={() => setShowPaywall(false)}
-    />
-  );
-}
+    return (
+      <PaywallScreen
+        onDismiss={() => setShowPaywall(false)}
+        onPurchaseSuccess={() => setShowPaywall(false)}
+      />
+    );
+  }
+
+  if (!isPremium) {
+    return (
+      <View style={{ flex: 1, backgroundColor: colors.background }}>
+        <View pointerEvents="none" style={{ flex: 1, opacity: 0.18, padding: spacing.xl }}>
+          <Text style={styles.previewTitle}>Product Mix Optimizer</Text>
+          <Text style={styles.previewSubtitle}>Track margins across your entire product lineup</Text>
+          {[...Array(4)].map((_, i) => (
+            <View key={i} style={styles.previewCard} />
+          ))}
+        </View>
+        <LockedScreenOverlay
+          title="Know which products drive profit"
+          description="Track margins on every item. Cut what hurts your bottom line, double down on what works."
+          onUnlock={() => setShowPaywall(true)}
+        />
+      </View>
+    );
+  }
   
   if (!currentDashboard) {
     return (
@@ -460,6 +473,23 @@ useEffect(() => {
 };
 
 const styles = StyleSheet.create({
+  previewTitle: {
+    ...textVariants.title,
+    marginBottom: spacing.sm,
+  },
+  previewSubtitle: {
+    ...textVariants.body,
+    color: colors.textSecondary,
+    marginBottom: spacing.xl,
+  },
+  previewCard: {
+    height: 72,
+    backgroundColor: colors.surface,
+    borderRadius: radii.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    marginBottom: spacing.md,
+  },
   container: {
     flex: 1,
     backgroundColor: colors.background,
