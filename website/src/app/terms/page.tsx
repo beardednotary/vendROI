@@ -42,7 +42,7 @@ export default function TermsOfService() {
 
           <Section title="5. Purchases and Payments">
             <p>
-              VendROI offers a Pro upgrade for a one-time purchase price of $29.99 (USD). All purchases are processed through the Apple App Store or Google Play Store.
+              VendROI offers a Pro upgrade for a one-time purchase price of $9.99 (USD). All purchases are processed through the Apple App Store or Google Play Store.
             </p>
             <ul className="mt-3">
               <li>Refund requests are handled by Apple or Google per their respective refund policies.</li>

@@ -1,4 +1,4 @@
-const PRO_PRICE = 29.99;
+const PRO_PRICE = 9.99;
 
 const freeFeatures = [
   'Investment Verdict',

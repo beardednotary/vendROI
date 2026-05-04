@@ -121,7 +121,7 @@ const handlePurchase = async () => {
 **RevenueCat Dashboard Setup:**
 1. Create account at revenuecat.com
 2. Add your app (iOS + Android)
-3. Create product: `premium_lifetime` - $19.99 one-time
+3. Create product: `premium_lifetime` - $9.99 one-time
 4. Create entitlement: `premium`
 5. Link product to entitlement
 6. Get API keys for both platforms
@@ -241,7 +241,7 @@ FREE FEATURES:
 • Profitability metrics with visual feedback
 • Auto-save, works offline
 
-PREMIUM FEATURES ($19.99 lifetime):
+PREMIUM FEATURES ($9.99 lifetime):
 • Location Comparison - Score up to 10 locations
 • Product Mix Optimizer - Find your best performers  
 • Growth Projector - 12-month expansion planning
@@ -293,7 +293,7 @@ Perfect for:
 - LinkedIn targeting small business owners
 
 **Pricing Test:**
-- Start at $19.99 lifetime
+- Start at $9.99 lifetime
 - Monitor conversion rate
 - Could test $14.99 or $24.99 based on early data
 
@@ -330,13 +330,13 @@ Set up:
 Conservative estimates:
 - 100 downloads/month
 - 10% conversion to premium = 10 paid
-- 10 × $19.99 = $199.90/month
+- 10 × $9.99 = $99.90/month
 - Year 1: ~$2,400 revenue
 
 Optimistic estimates:
 - 500 downloads/month  
 - 15% conversion = 75 paid
-- 75 × $19.99 = $1,499.25/month
+- 75 × $9.99 = $749.25/month
 - Year 1: ~$18,000 revenue
 
 Break-even: ~50 premium purchases covers development time

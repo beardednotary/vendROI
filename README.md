@@ -9,7 +9,7 @@ A professional mobile app for vending machine operators to calculate ROI, compar
 - Real-time calculations with visual feedback
 - Auto-save functionality
 
-### Premium Tier ($19.99 lifetime)
+### Premium Tier ($9.99 lifetime)
 - **Location Comparison**: Score and rank up to 10 locations with photo tracking
 - **Product Mix Optimizer**: Analyze profitability by product, identify best performers
 - **Growth Projector**: 12-month expansion modeling with investment planning
@@ -82,7 +82,7 @@ vending-roi-app/
 ## Revenue Model
 
 - Freemium: Dashboard is free
-- One-time purchase: $19.99 for all premium features
+- One-time purchase: $9.99 for all premium features
 - No subscriptions (operators hate recurring charges)
 
 ## Next Steps
