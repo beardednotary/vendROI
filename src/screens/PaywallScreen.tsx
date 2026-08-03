@@ -12,6 +12,7 @@ import {
   Linking,
 } from 'react-native';
 import Purchases, { PurchasesOffering } from 'react-native-purchases';
+import { Ionicons } from '@expo/vector-icons';
 import { Button } from '../components/Button';
 import { colors, spacing, textVariants, radii } from '../theme/theme';
 import { useAppStore } from '../store/useAppStore';
@@ -159,35 +160,32 @@ export const PaywallScreen: React.FC<PaywallScreenProps> = ({
         )}
       </View>
 
-      <Text style={styles.sectionLabel}>WHAT YOU'RE MISSING</Text>
-      <View style={styles.lockedSection}>
-        <LockedRow label="Risk Level" placeholder="████  HIGH" />
-        <LockedRow label="Profit After All Costs" placeholder="$???" />
-        <LockedRow label="Location Verdict" placeholder='"This setup likely und…"' />
-        <LockedRow label="Machines to Hit Your Goal" placeholder="??? machines" />
-      </View>
-
       <Text style={styles.sectionLabel}>WHAT YOU UNLOCK</Text>
       <View style={styles.featuresSection}>
         <Feature
-          icon="📍"
+          iconName="location-outline"
           title="Location Comparison"
-          description="Find out which location actually makes money — before you sign a contract"
+          description="Compare up to 10 machines side-by-side to pick the highest ROI deal"
         />
         <Feature
-          icon="🛒"
+          iconName="pie-chart-outline"
           title="Product Mix Optimizer"
           description="See exactly which products drive profit and which eat into your margins"
         />
         <Feature
-          icon="📈"
+          iconName="trending-up-outline"
           title="Growth Projector"
           description="Model how fast you can scale — and what it will actually cost"
         />
         <Feature
-          icon="📊"
+          iconName="document-text-outline"
           title="Export Reports"
-          description="Share your full analysis as a PDF or CSV"
+          description="Export professional PDF investment reports for partners or lenders"
+        />
+        <Feature
+          iconName="add-circle-outline"
+          title="Unlimited Machines"
+          description="Track and compare every machine in your portfolio, not just one"
         />
       </View>
 
@@ -243,23 +241,15 @@ export const PaywallScreen: React.FC<PaywallScreenProps> = ({
   );
 };
 
-const LockedRow: React.FC<{ label: string; placeholder: string }> = ({ label, placeholder }) => (
-  <View style={styles.lockedRow}>
-    <Text style={styles.lockedLabel}>{label}</Text>
-    <View style={styles.lockedRight}>
-      <Text style={styles.lockedPlaceholder}>{placeholder}</Text>
-      <Text style={styles.lockIcon}>🔒</Text>
-    </View>
-  </View>
-);
-
 const Feature: React.FC<{
-  icon: string;
+  iconName: React.ComponentProps<typeof Ionicons>['name'];
   title: string;
   description: string;
-}> = ({ icon, title, description }) => (
+}> = ({ iconName, title, description }) => (
   <View style={styles.feature}>
-    <Text style={styles.featureIcon}>{icon}</Text>
+    <View style={styles.featureIconWrap}>
+      <Ionicons name={iconName} size={22} color={colors.accentPrimary} />
+    </View>
     <View style={styles.featureContent}>
       <Text style={styles.featureTitle}>{title}</Text>
       <Text style={styles.featureDescription}>{description}</Text>
@@ -311,42 +301,6 @@ const styles = StyleSheet.create({
     color: colors.muted,
     marginBottom: spacing.md,
   },
-  lockedSection: {
-    marginBottom: spacing.xxl,
-    borderRadius: radii.md,
-    borderWidth: 1,
-    borderColor: colors.border,
-    overflow: 'hidden',
-  },
-  lockedRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: spacing.lg,
-    backgroundColor: colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  lockedLabel: {
-    ...textVariants.body,
-    fontSize: 14,
-    color: colors.textSecondary,
-    flex: 1,
-  },
-  lockedRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  lockedPlaceholder: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.muted,
-    opacity: 0.5,
-  },
-  lockIcon: {
-    fontSize: 14,
-  },
   featuresSection: {
     marginBottom: spacing.xxl,
   },
@@ -360,8 +314,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
-  featureIcon: {
-    fontSize: 32,
+  featureIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: radii.sm,
+    backgroundColor: colors.background,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginRight: spacing.md,
   },
   featureContent: {

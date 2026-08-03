@@ -1,25 +1,25 @@
 // src/theme/theme.ts
 
 export const colors = {
-  // Backgrounds
+  // Backgrounds (elevation hierarchy: background < surfaceAlt < surface)
   background: '#02040A',
-  surface: '#070C16',
-  surfaceAlt: '#050812',
+  surface: '#141927',
+  surfaceAlt: '#0A0E18',
 
   // Accents
   accentPrimary: '#F97316', // money / CTA
-  accentProfit: '#22C55E',
-  accentRisk: '#FB7185',
+  accentProfit: '#34D399',
+  accentRisk: '#F87171',
   accentNeutral: '#6366F1',
 
   // Text
   textPrimary: '#F9FAFB',
   textSecondary: '#9CA3AF',
-  muted: '#6B7280',
+  muted: '#8891A3',
 
   // Borders
-  border: '#111827',
-  softBorder: '#020617',
+  border: '#2A3142',
+  softBorder: '#161B26',
 };
 
 export const spacing = {
