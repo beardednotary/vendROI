@@ -28,6 +28,7 @@ import { exportFullProjectToCSV, exportFullProjectToPDF } from '../utils/export'
 import { Toast } from '../utils/toast';
 import { REVENUECAT_CONFIG } from '../config/revenueCat';
 import { maybeRequestReview } from '../utils/storeReview';
+import { trackEvent } from '../utils/analytics';
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
 
@@ -45,9 +46,19 @@ export const DashboardScreen: React.FC = () => {
     setActiveDashboardId,
     totalMachinesCreated,
     totalDashboardSessions,
-    incrementDashboardSessions,
+    hasSeenPositiveVerdict,
+    markPositiveVerdictSeen,
   } = useAppStore();
   const [showPaywall, setShowPaywall] = useState(false);
+
+  const requirePremium = (trigger: string, action: () => void) => {
+    if (isPremium) {
+      action();
+    } else {
+      trackEvent('paywall_viewed', { trigger });
+      setShowPaywall(true);
+    }
+  };
   const currentDashboard = dashboards.find((d) => d.id === activeDashboardId) ?? dashboards[0];
   const currentLocationComparison = locationComparisons.find(
     (comparison) => comparison.dashboardId === currentDashboard?.id
@@ -123,14 +134,7 @@ export const DashboardScreen: React.FC = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentDashboard?.id]);
 
-  // Increment session count each time the user views a different dashboard
-  useEffect(() => {
-    if (!currentDashboard?.id) return;
-    incrementDashboardSessions();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentDashboard?.id]);
-
-  // Review triggers: 3rd machine created, or 3rd dashboard session viewed
+  // Review trigger: repeat usage (3rd app session, or 3rd machine for Pro users)
   useEffect(() => {
     if (totalMachinesCreated >= 3 || totalDashboardSessions >= 3) {
       maybeRequestReview();
@@ -141,10 +145,13 @@ export const DashboardScreen: React.FC = () => {
   const handleAddMachine = () => {
     if (isPremium) {
       addDashboard(createBlankDashboard());
+      trackEvent('machine_created', { total: totalMachinesCreated + 1, isPremium: true });
     } else if (totalMachinesCreated >= 1) {
+      trackEvent('paywall_viewed', { trigger: 'add_machine' });
       setShowPaywall(true);
     } else {
       addDashboard(createBlankDashboard());
+      trackEvent('machine_created', { total: totalMachinesCreated + 1, isPremium: false });
     }
   };
 
@@ -250,7 +257,16 @@ useEffect(() => {
     monthlyNetProfit > 0
       ? totalInitialInvestment / monthlyNetProfit
       : 0;
-  
+
+  // Review trigger: first time the user sees a genuinely profitable verdict
+  useEffect(() => {
+    if (hasSeenPositiveVerdict) return;
+    if (totalInitialInvestment > 0 && roiPercentage >= 25 && breakEvenMonths > 0 && breakEvenMonths <= 24) {
+      markPositiveVerdictSeen();
+      maybeRequestReview();
+    }
+  }, [hasSeenPositiveVerdict, totalInitialInvestment, roiPercentage, breakEvenMonths]);
+
   const getBreakEvenMessage = (months: number) => {
   if (months === 0 || months > 100) return 'Not profitable';
   if (months > 24) return 'Too long to break even';
@@ -476,7 +492,7 @@ const getBreakEvenColor = (months: number) => {
 <View style={styles.exportButtons}>
   <Button
     title="Export Full PDF"
-    onPress={async () => {
+    onPress={() => requirePremium('export_pdf', async () => {
       if (!currentDashboard) return;
       try {
         const metrics = {
@@ -510,14 +526,14 @@ const getBreakEvenColor = (months: number) => {
           text2: message,
         });
       }
-    }}
+    })}
     variant="secondary"
     style={styles.exportButton}
   />
-  
+
   <Button
     title="Export Full CSV"
-    onPress={async () => {
+    onPress={() => requirePremium('export_csv', async () => {
       if (!currentDashboard) return;
       try {
         const metrics = {
@@ -551,7 +567,7 @@ const getBreakEvenColor = (months: number) => {
           text2: message,
         });
       }
-    }}
+    })}
     variant="secondary"
     style={styles.exportButton}
   />
@@ -1067,7 +1083,10 @@ const getBreakEvenColor = (months: number) => {
           </Text>
           <Button
             title={`Run Full Breakdown — ${REVENUECAT_CONFIG.fallbackPrice}`}
-            onPress={() => setShowPaywall(true)}
+            onPress={() => {
+              trackEvent('paywall_viewed', { trigger: 'upgrade_banner' });
+              setShowPaywall(true);
+            }}
             style={styles.upgradeButton}
           />
         </View>

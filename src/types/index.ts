@@ -144,6 +144,8 @@ export interface AppData {
   dataOptIn: boolean;
   activeDashboardId?: string;
   totalMachinesCreated?: number;
+  totalDashboardSessions?: number;
+  hasSeenPositiveVerdict?: boolean;
 }
 
 export interface ExportData {

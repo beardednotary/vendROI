@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { trackEvent } from '../utils/analytics';
 import { useAppStore } from '../store/useAppStore';
 import { Input } from '../components/Input';
 import { Button } from '../components/Button';
@@ -130,7 +131,10 @@ export const GrowthProjectorScreen = () => {
         <LockedScreenOverlay
           title="See your path to $1k/month"
           description="Model 12 months of growth. See exactly what it costs to scale — and when it starts compounding."
-          onUnlock={() => setShowPaywall(true)}
+          onUnlock={() => {
+            trackEvent('paywall_viewed', { trigger: 'growth_projector' });
+            setShowPaywall(true);
+          }}
         />
       </View>
     );

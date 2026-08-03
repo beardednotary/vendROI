@@ -31,6 +31,7 @@ import { Location, LocationType, CompetitionLevel } from '../types';
 import Toast from 'react-native-toast-message';
 import { exportLocationsToCSV } from '../utils/export';
 import { LockedScreenOverlay } from '../components/LockedScreenOverlay';
+import { trackEvent } from '../utils/analytics';
 
 export const LocationComparisonScreen: React.FC = () => {
   const { 
@@ -85,7 +86,10 @@ export const LocationComparisonScreen: React.FC = () => {
         <LockedScreenOverlay
           title="Find your best location before you commit"
           description="Score locations by foot traffic, rent, and competition. Know which one actually makes money before you sign anything."
-          onUnlock={() => setShowPaywall(true)}
+          onUnlock={() => {
+            trackEvent('paywall_viewed', { trigger: 'location_comparison' });
+            setShowPaywall(true);
+          }}
         />
       </View>
     );

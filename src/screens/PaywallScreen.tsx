@@ -18,6 +18,8 @@ import { colors, spacing, textVariants, radii } from '../theme/theme';
 import { useAppStore } from '../store/useAppStore';
 import { Toast } from '../utils/toast';
 import { REVENUECAT_CONFIG } from '../config/revenueCat';
+import { maybeRequestReview } from '../utils/storeReview';
+import { trackEvent } from '../utils/analytics';
 
 interface PaywallScreenProps {
   onDismiss: () => void;
@@ -82,12 +84,16 @@ export const PaywallScreen: React.FC<PaywallScreenProps> = ({
 
       if (customerInfo.entitlements.active[REVENUECAT_CONFIG.entitlementId]) {
         setPremium(true);
+        trackEvent('purchase_completed', { price: selectedPackage?.product.priceString });
         Toast.show({
           type: 'success',
           text1: 'Welcome to Pro!',
           text2: 'All features unlocked',
         });
         onPurchaseSuccess();
+        setTimeout(() => {
+          maybeRequestReview();
+        }, 1500);
       } else {
         Alert.alert(
           'Purchase Completed',
@@ -96,6 +102,7 @@ export const PaywallScreen: React.FC<PaywallScreenProps> = ({
       }
     } catch (error: any) {
       if (!error.userCancelled) {
+        trackEvent('purchase_failed', { message: error?.message });
         Alert.alert(
           'Purchase Failed',
           error?.message || 'We could not complete your purchase. Please try again.'
@@ -113,6 +120,7 @@ export const PaywallScreen: React.FC<PaywallScreenProps> = ({
       
       if (customerInfo.entitlements.active[REVENUECAT_CONFIG.entitlementId]) {
         setPremium(true);
+        trackEvent('purchase_restored');
         Toast.show({
           type: 'success',
           text1: 'Purchase Restored',

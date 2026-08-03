@@ -1,7 +1,7 @@
 // App.tsx
 
-import React, { useEffect, useState } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import React, { useEffect, useRef, useState } from 'react';
+import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Text, StyleSheet, AppState } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -11,6 +11,7 @@ import { Toast as ToastComponent } from './src/components/Toast';
 import { Onboarding } from './src/components/Onboarding';
 import { Toast } from './src/utils/toast';
 import { createSampleDashboard } from './src/utils/sampleData';
+import { initAnalytics, trackEvent, trackScreen } from './src/utils/analytics';
 import { colors, spacing, textVariants } from './src/theme/theme';
 
 import Purchases, { LOG_LEVEL } from 'react-native-purchases';
@@ -42,9 +43,16 @@ export default function App() {
   const [toastVisible, setToastVisible] = useState(false);
   const [toastConfig, setToastConfig] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const navigationRef = useRef<NavigationContainerRef<any>>(null);
+  const routeNameRef = useRef<string | undefined>(undefined);
 
   useEffect(() => {
-    loadData().then(() => setIsLoading(false));
+    initAnalytics();
+    trackEvent('app_opened');
+    loadData().then(() => {
+      setIsLoading(false);
+      useAppStore.getState().incrementDashboardSessions();
+    });
   }, []);
 
 useEffect(() => {
@@ -98,13 +106,14 @@ useEffect(() => {
   // Add sample dashboard
   const sampleDashboard = createSampleDashboard();
   addDashboard(sampleDashboard);
-  
+
   // Force save
   await new Promise(resolve => setTimeout(resolve, 500));
-  
+
   // Mark onboarding as complete
   setHasCompletedOnboarding(true);
-  
+  trackEvent('onboarding_completed');
+
   // Show welcome toast
   Toast.show({
     type: 'success',
@@ -131,7 +140,20 @@ useEffect(() => {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <NavigationContainer>
+      <NavigationContainer
+        ref={navigationRef}
+        onReady={() => {
+          routeNameRef.current = navigationRef.current?.getCurrentRoute()?.name;
+        }}
+        onStateChange={() => {
+          const previousRouteName = routeNameRef.current;
+          const currentRouteName = navigationRef.current?.getCurrentRoute()?.name;
+          if (currentRouteName && currentRouteName !== previousRouteName) {
+            trackScreen(currentRouteName);
+          }
+          routeNameRef.current = currentRouteName;
+        }}
+      >
         <Tab.Navigator
           screenOptions={{
             headerStyle: {

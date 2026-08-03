@@ -11,6 +11,7 @@ import {
   Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { trackEvent } from '../utils/analytics';
 import { useAppStore } from '../store/useAppStore';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
@@ -77,7 +78,10 @@ const [showPaywall, setShowPaywall] = useState(false);
         <LockedScreenOverlay
           title="Know which products drive profit"
           description="Track margins on every item. Cut what hurts your bottom line, double down on what works."
-          onUnlock={() => setShowPaywall(true)}
+          onUnlock={() => {
+            trackEvent('paywall_viewed', { trigger: 'product_mix' });
+            setShowPaywall(true);
+          }}
         />
       </View>
     );

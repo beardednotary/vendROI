@@ -37,9 +37,13 @@ interface AppStore extends AppData {
   // Paywall gate counter (never decremented)
   totalMachinesCreated: number;
 
-  // Review trigger counter — incremented each time user views a dashboard session
+  // Review trigger counter — incremented once per app launch
   totalDashboardSessions: number;
   incrementDashboardSessions: () => void;
+
+  // Review trigger — set once the user has seen a profitable verdict
+  hasSeenPositiveVerdict: boolean;
+  markPositiveVerdictSeen: () => void;
 
   // Product Mix
   addProductMix: (productMix: ProductMixData) => void;
@@ -74,6 +78,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
   activeDashboardId: null,
   totalMachinesCreated: 0,
   totalDashboardSessions: 0,
+  hasSeenPositiveVerdict: false,
 
   loadData: async () => {
     try {
@@ -116,6 +121,8 @@ export const useAppStore = create<AppStore>((set, get) => ({
         dataOptIn: state.dataOptIn,
         activeDashboardId: state.activeDashboardId ?? undefined,
         totalMachinesCreated: state.totalMachinesCreated,
+        totalDashboardSessions: state.totalDashboardSessions,
+        hasSeenPositiveVerdict: state.hasSeenPositiveVerdict,
       };
       const jsonValue = JSON.stringify(dataToSave);
       await AsyncStorage.setItem(STORAGE_KEY, jsonValue);
@@ -177,6 +184,13 @@ export const useAppStore = create<AppStore>((set, get) => ({
 
   incrementDashboardSessions: () => {
     set((state) => ({ totalDashboardSessions: state.totalDashboardSessions + 1 }));
+    debouncedSave(get().saveData);
+  },
+
+  markPositiveVerdictSeen: () => {
+    if (get().hasSeenPositiveVerdict) return;
+    set({ hasSeenPositiveVerdict: true });
+    debouncedSave(get().saveData);
   },
 
   // Product Mix actions
