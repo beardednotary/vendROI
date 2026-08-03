@@ -11,11 +11,14 @@ import {
   Animated,
   Switch,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { Button } from './Button';
 import { useAppStore } from '../store/useAppStore';
 import { colors, spacing, radii, textVariants } from '../theme/theme';
 
 const { width } = Dimensions.get('window');
+
+type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
 
 interface OnboardingProps {
   onComplete: () => void;
@@ -23,24 +26,24 @@ interface OnboardingProps {
 
 const TOTAL_SLIDES = 5;
 
-const slides = [
+const slides: { iconName: IoniconName; title: string; description: string }[] = [
   {
-    emoji: '📊',
+    iconName: 'calculator-outline',
     title: 'Calculate Your ROI',
     description: 'Get instant profitability metrics for your vending machine business. See break-even points, profit margins, and annual returns.',
   },
   {
-    emoji: '📍',
+    iconName: 'location-outline',
     title: 'Compare Locations',
     description: 'Score potential locations based on foot traffic, rent, and competition. Find the perfect spot for maximum profits.',
   },
   {
-    emoji: '🛒',
+    iconName: 'pie-chart-outline',
     title: 'Optimize Product Mix',
     description: 'Track which products make you the most money. Identify your best performers and cut the losers.',
   },
   {
-    emoji: '📈',
+    iconName: 'trending-up-outline',
     title: 'Plan Your Growth',
     description: 'Model your 12-month expansion. See exactly when to add machines and how much capital you\'ll need.',
   },
@@ -110,13 +113,17 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
         >
           {slide ? (
             <>
-              <Text style={styles.emoji}>{slide.emoji}</Text>
+              <View style={styles.iconWrap}>
+                <Ionicons name={slide.iconName} size={56} color={colors.accentPrimary} />
+              </View>
               <Text style={styles.title}>{slide.title}</Text>
               <Text style={styles.description}>{slide.description}</Text>
             </>
           ) : (
             <>
-              <Text style={styles.emoji}>🤝</Text>
+              <View style={styles.iconWrap}>
+                <Ionicons name="people-outline" size={56} color={colors.accentPrimary} />
+              </View>
               <Text style={styles.title}>Help Fellow Operators</Text>
               <Text style={styles.description}>
                 Share anonymous data (costs, revenue, locations) to help build industry benchmarks. No personal info is ever collected.
@@ -201,8 +208,15 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: '100%',
   },
-  emoji: {
-    fontSize: 80,
+  iconWrap: {
+    width: 132,
+    height: 132,
+    borderRadius: 66,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: spacing.xl,
   },
   title: {

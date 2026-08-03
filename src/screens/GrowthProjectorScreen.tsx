@@ -8,6 +8,7 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useAppStore } from '../store/useAppStore';
 import { Input } from '../components/Input';
 import { Button } from '../components/Button';
@@ -327,9 +328,18 @@ export const GrowthProjectorScreen = () => {
             <Text style={[styles.summaryValue, { color: getProfitColor(roi) }]}>
               {formatPercent(roi)}
             </Text>
-            <Text style={[styles.microCopy, { color: getProfitColor(roi) }]}>
-              {roi > 50 ? '🔥 Excellent returns' : roi > 25 ? '✓ Good growth' : roi > 0 ? '⚠️ Slim margins' : '❌ Losing money'}
-            </Text>
+            <View style={styles.microCopyRow}>
+              <Ionicons
+                name={
+                  roi > 50 ? 'trending-up' : roi > 25 ? 'checkmark-circle-outline' : roi > 0 ? 'warning-outline' : 'close-circle-outline'
+                }
+                size={11}
+                color={getProfitColor(roi)}
+              />
+              <Text style={[styles.microCopy, { color: getProfitColor(roi) }]}>
+                {roi > 50 ? 'Excellent returns' : roi > 25 ? 'Good growth' : roi > 0 ? 'Slim margins' : 'Losing money'}
+              </Text>
+            </View>
           </View>
 
           <View style={styles.summaryCard}>
@@ -415,7 +425,10 @@ export const GrowthProjectorScreen = () => {
 
       {/* Tips Section */}
       <View style={styles.tipsSection}>
-        <Text style={styles.tipsTitle}>💡 Growth Tips</Text>
+        <View style={styles.tipsTitleRow}>
+          <Ionicons name="bulb-outline" size={16} color={colors.textPrimary} />
+          <Text style={styles.tipsTitle}>Growth Tips</Text>
+        </View>
         <Text style={styles.tipText}>
           • Quarter-end additions align with typical funding cycles
         </Text>
@@ -586,7 +599,7 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.border,
   },
   tableRowQuarter: {
-    backgroundColor: '#FFF9C4',
+    backgroundColor: colors.surfaceAlt,
   },
   tableRowTotal: {
     backgroundColor: colors.surfaceAlt,
@@ -613,10 +626,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
+  tipsTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    marginBottom: spacing.md,
+  },
   tipsTitle: {
     ...textVariants.subtitle,
     fontSize: 16,
-    marginBottom: spacing.md,
   },
   tipText: {
     ...textVariants.body,
@@ -625,10 +643,15 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
     lineHeight: 20,
   },
+  microCopyRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.xs,
+    marginTop: spacing.xs,
+  },
   microCopy: {
     fontSize: 10,
     fontWeight: '600',
-    marginTop: spacing.xs,
-    textAlign: 'center',
   },
 });

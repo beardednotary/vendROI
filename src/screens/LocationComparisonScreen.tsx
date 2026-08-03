@@ -333,8 +333,12 @@ export const LocationComparisonScreen: React.FC = () => {
         <View style={styles.locationHeader}>
           <View style={styles.locationTitleRow}>
             <Text style={styles.locationName}>{item.name}</Text>
-            <View style={[styles.scoreBadge, { backgroundColor: scoreColor }]}>
-              <Text style={styles.scoreText}>{metrics.locationScore.toFixed(0)}</Text>
+            <View style={[styles.scoreBadge, { borderColor: scoreColor }]}>
+              <View style={[styles.scoreDot, { backgroundColor: scoreColor }]} />
+              <Text style={[styles.scoreText, { color: scoreColor }]}>
+                {metrics.locationScore.toFixed(0)}
+              </Text>
+              <Text style={styles.scoreUnit}>/100</Text>
             </View>
           </View>
           <Text style={styles.locationType}>{item.type}</Text>
@@ -666,14 +670,28 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scoreBadge: {
-    paddingHorizontal: spacing.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
-    borderRadius: radii.pill,
+    borderRadius: radii.sm,
+    borderWidth: 1,
+    backgroundColor: colors.surfaceAlt,
+  },
+  scoreDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
   },
   scoreText: {
-    color: colors.background,
     fontWeight: '700',
     fontSize: 14,
+  },
+  scoreUnit: {
+    ...textVariants.body,
+    fontSize: 11,
+    color: colors.muted,
   },
   locationType: {
     ...textVariants.label,

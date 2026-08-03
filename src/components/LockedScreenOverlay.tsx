@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { Button } from './Button';
 import { colors, spacing, textVariants, radii } from '../theme/theme';
 import { REVENUECAT_CONFIG } from '../config/revenueCat';
@@ -15,7 +16,12 @@ interface Props {
 export const LockedScreenOverlay: React.FC<Props> = ({ title, description, onUnlock }) => (
   <View style={styles.overlay}>
     <View style={styles.card}>
-      <Text style={styles.lock}>🔒</Text>
+      <Ionicons
+        name="lock-closed"
+        size={32}
+        color={colors.accentPrimary}
+        style={styles.lock}
+      />
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.description}>{description}</Text>
       <Button
@@ -46,7 +52,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   lock: {
-    fontSize: 40,
     marginBottom: spacing.md,
   },
   title: {

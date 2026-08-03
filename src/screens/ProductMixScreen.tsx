@@ -10,6 +10,7 @@ import {
   FlatList,
   Alert,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useAppStore } from '../store/useAppStore';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
@@ -246,7 +247,8 @@ const [showPaywall, setShowPaywall] = useState(false);
           <Text style={styles.productName}>{item.name}</Text>
           {isBest && (
             <View style={styles.bestBadge}>
-              <Text style={styles.bestBadgeText}>🏆 Best</Text>
+              <Ionicons name="star" size={11} color={colors.background} />
+              <Text style={styles.bestBadgeText}>Best</Text>
             </View>
           )}
         </View>
@@ -267,9 +269,18 @@ const [showPaywall, setShowPaywall] = useState(false);
             <Text style={[styles.productMetricValue, { color: colors.accentProfit }]}>
               {formatPercent(metrics.marginPercentage)}
             </Text>
-              <Text style={styles.productMicroCopy}>
-    {metrics.marginPercentage > 50 ? '🔥 High' : metrics.marginPercentage > 30 ? '✓ Good' : '⚠️ Low'}
-  </Text>
+              <View style={styles.productMicroCopyRow}>
+                <Ionicons
+                  name={
+                    metrics.marginPercentage > 50 ? 'trending-up' : metrics.marginPercentage > 30 ? 'checkmark-circle-outline' : 'warning-outline'
+                  }
+                  size={10}
+                  color={colors.textSecondary}
+                />
+                <Text style={styles.productMicroCopy}>
+                  {metrics.marginPercentage > 50 ? 'High' : metrics.marginPercentage > 30 ? 'Good' : 'Low'}
+                </Text>
+              </View>
           </View>
         </View>
 
@@ -577,6 +588,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   bestBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs / 2,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
     backgroundColor: colors.accentPrimary,
@@ -661,10 +675,15 @@ const styles = StyleSheet.create({
   formButton: {
     flex: 1,
   },
+  productMicroCopyRow: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: spacing.xs / 2,
+  marginTop: spacing.xs / 2,
+},
   productMicroCopy: {
   fontSize: 9,
   fontWeight: '600',
-  marginTop: spacing.xs / 2,
   color: colors.textSecondary,
 },
 exportButton: {
