@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   TextInput,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { createBlankDashboard } from '../utils/sampleData';
 import { useAppStore } from '../store/useAppStore';
 import { Input } from '../components/Input';
@@ -27,6 +28,8 @@ import { exportFullProjectToCSV, exportFullProjectToPDF } from '../utils/export'
 import { Toast } from '../utils/toast';
 import { REVENUECAT_CONFIG } from '../config/revenueCat';
 import { maybeRequestReview } from '../utils/storeReview';
+
+type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
 
 export const DashboardScreen: React.FC = () => {
   const {
@@ -249,10 +252,17 @@ useEffect(() => {
       : 0;
   
   const getBreakEvenMessage = (months: number) => {
-  if (months === 0 || months > 100) return '⚠️ Not profitable';
-  if (months > 24) return '⚠️ Too long to break even';
-  if (months <= 12) return '🚀 Fast payback period';
-  return '✓ Standard timeline';
+  if (months === 0 || months > 100) return 'Not profitable';
+  if (months > 24) return 'Too long to break even';
+  if (months <= 12) return 'Fast payback period';
+  return 'Standard timeline';
+};
+
+const getBreakEvenIcon = (months: number): IoniconName => {
+  if (months === 0 || months > 100) return 'alert-circle-outline';
+  if (months > 24) return 'warning-outline';
+  if (months <= 12) return 'rocket-outline';
+  return 'checkmark-circle-outline';
 };
 
 const getBreakEvenColor = (months: number) => {
@@ -269,13 +279,13 @@ const getBreakEvenColor = (months: number) => {
   const monthlyCashFlow = monthlyNetProfit;
 
   // Investment verdict
-  const getVerdict = () => {
-    if (totalInitialInvestment === 0) return { label: 'Enter Your Numbers', emoji: '📊', color: colors.muted, message: 'Fill in your investment details above' };
-    if (monthlyNetProfit <= 0) return { label: 'HIGH RISK', emoji: '🚨', color: colors.accentRisk, message: 'This investment is not currently profitable' };
-    if (breakEvenMonths > 24) return { label: 'CAUTION', emoji: '⚠️', color: colors.accentRisk, message: `Break-even exceeds 2 years` };
-    if (roiPercentage >= 50 && breakEvenMonths <= 12) return { label: 'STRONG INVESTMENT', emoji: '🔥', color: colors.accentProfit, message: `High ROI with fast ${breakEvenMonths.toFixed(0)}-month payback` };
-    if (roiPercentage >= 25) return { label: 'SOLID INVESTMENT', emoji: '✅', color: colors.accentProfit, message: 'Good returns with manageable timeline' };
-    return { label: 'MODERATE', emoji: '📊', color: colors.accentPrimary, message: 'Viable but watch your margins closely' };
+  const getVerdict = (): { label: string; iconName: IoniconName; color: string; message: string } => {
+    if (totalInitialInvestment === 0) return { label: 'Enter Your Numbers', iconName: 'create-outline', color: colors.muted, message: 'Fill in your investment details above' };
+    if (monthlyNetProfit <= 0) return { label: 'HIGH RISK', iconName: 'alert-circle', color: colors.accentRisk, message: 'This investment is not currently profitable' };
+    if (breakEvenMonths > 24) return { label: 'CAUTION', iconName: 'warning', color: colors.accentRisk, message: `Break-even exceeds 2 years` };
+    if (roiPercentage >= 50 && breakEvenMonths <= 12) return { label: 'STRONG INVESTMENT', iconName: 'trending-up', color: colors.accentProfit, message: `High ROI with fast ${breakEvenMonths.toFixed(0)}-month payback` };
+    if (roiPercentage >= 25) return { label: 'SOLID INVESTMENT', iconName: 'checkmark-circle', color: colors.accentProfit, message: 'Good returns with manageable timeline' };
+    return { label: 'MODERATE', iconName: 'bar-chart', color: colors.accentPrimary, message: 'Viable but watch your margins closely' };
   };
 
   const verdict = getVerdict();
@@ -323,12 +333,18 @@ const getBreakEvenColor = (months: number) => {
     valueColor,
     highlight,
     style,
+    captionText,
+    captionColor,
+    captionIcon,
   }: {
     label: string;
     value: string;
     valueColor?: string;
     highlight?: boolean;
     style?: any;
+    captionText?: string;
+    captionColor?: string;
+    captionIcon?: IoniconName;
   }) => (
     <View
       style={[
@@ -346,6 +362,21 @@ const getBreakEvenColor = (months: number) => {
       >
         {value}
       </Text>
+      {captionText && (
+        <View style={styles.metricCaptionRow}>
+          {captionIcon && (
+            <Ionicons name={captionIcon} size={12} color={captionColor} />
+          )}
+          <Text
+            style={[
+              styles.metricCaption,
+              captionColor ? { color: captionColor } : null,
+            ]}
+          >
+            {captionText}
+          </Text>
+        </View>
+      )}
     </View>
   );
 
@@ -429,7 +460,7 @@ const getBreakEvenColor = (months: number) => {
   <TouchableOpacity onPress={() => setIsEditingName(true)}>
     <View style={styles.projectNameContainer}>
       <Text style={styles.header}>{name}</Text>
-      <Text style={styles.editIcon}>✏️</Text>
+      <Ionicons name="pencil-outline" size={16} color={colors.muted} style={styles.editIcon} />
     </View>
   </TouchableOpacity>
 )}
@@ -900,7 +931,12 @@ const getBreakEvenColor = (months: number) => {
       >
         {/* VERDICT CARD */}
         <View style={[styles.verdictCard, { borderColor: verdict.color }]}>
-          <Text style={styles.verdictEmoji}>{verdict.emoji}</Text>
+          <Ionicons
+            name={verdict.iconName}
+            size={36}
+            color={verdict.color}
+            style={styles.verdictIcon}
+          />
           <Text style={[styles.verdictLabel, { color: verdict.color }]}>{verdict.label}</Text>
           <Text style={styles.verdictMessage}>{verdict.message}</Text>
           {verdictLine && (
@@ -946,12 +982,10 @@ const getBreakEvenColor = (months: number) => {
       : 'N/A'
   }
   style={styles.gridItem}
+  captionText={breakEvenMonths > 0 ? getBreakEvenMessage(breakEvenMonths) : undefined}
+  captionColor={breakEvenMonths > 0 ? getBreakEvenColor(breakEvenMonths) : undefined}
+  captionIcon={breakEvenMonths > 0 ? getBreakEvenIcon(breakEvenMonths) : undefined}
 />
-{breakEvenMonths > 0 && (
-  <Text style={[styles.microCopy, { color: getBreakEvenColor(breakEvenMonths) }]}>
-    {getBreakEvenMessage(breakEvenMonths)}
-  </Text>
-)}
           <MetricBox
             label="Profit Margin"
             value={formatPercent(profitMargin)}
@@ -1156,6 +1190,16 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: '900',
   },
+  metricCaptionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    marginTop: spacing.xs,
+  },
+  metricCaption: {
+    fontSize: 11,
+    fontWeight: '600',
+  },
   whatIfSection: {
     marginTop: spacing.xl,
     marginBottom: spacing.xl,
@@ -1273,7 +1317,6 @@ const styles = StyleSheet.create({
   marginBottom: spacing.xl,
 },
 editIcon: {
-  fontSize: 18,
   opacity: 0.5,
 },
 projectNameInput: {
@@ -1284,12 +1327,6 @@ projectNameInput: {
   borderBottomColor: colors.accentPrimary,
   paddingBottom: spacing.sm,
   marginBottom: spacing.xl,
-},
-microCopy: {
-  fontSize: 11,
-  fontWeight: '600',
-  marginTop: spacing.xs,
-  textAlign: 'center',
 },
 exportButtons: {
   flexDirection: 'row',
@@ -1307,8 +1344,7 @@ verdictCard: {
   borderWidth: 2,
   marginBottom: spacing.xl,
 },
-verdictEmoji: {
-  fontSize: 40,
+verdictIcon: {
   marginBottom: spacing.sm,
 },
 verdictLabel: {
