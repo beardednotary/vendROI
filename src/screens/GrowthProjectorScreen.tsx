@@ -368,7 +368,7 @@ export const GrowthProjectorScreen = () => {
 
         <View style={styles.tableHeader}>
           <Text style={[styles.tableHeaderCell, { flex: 0.8 }]}>Mo</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Machines</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Mach.</Text>
           <Text style={[styles.tableHeaderCell, { flex: 1.5 }]}>Investment</Text>
           <Text style={[styles.tableHeaderCell, { flex: 1.5 }]}>Revenue</Text>
           <Text style={[styles.tableHeaderCell, { flex: 1.5 }]}>Profit</Text>
@@ -562,8 +562,11 @@ const styles = StyleSheet.create({
     marginHorizontal: -spacing.xs,
   },
   summaryCard: {
-    width: '48%',
-    margin: spacing.xs,
+    flexBasis: '48%',
+    flexGrow: 0,
+    flexShrink: 0,
+    marginHorizontal: spacing.xs,
+    marginBottom: spacing.sm,
     padding: spacing.md,
     backgroundColor: colors.surface,
     borderRadius: radii.md,
