@@ -18,7 +18,7 @@
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
-    },
+    }, 
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
@@ -40,7 +40,14 @@
       }
     },
     "plugins": [
-      "expo-localization"
+      "expo-localization",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos to add a location photo.",
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera to take a location photo."
+        }
+      ]
     ]
   }
 }

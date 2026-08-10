@@ -258,14 +258,19 @@ useEffect(() => {
       ? totalInitialInvestment / monthlyNetProfit
       : 0;
 
-  // Review trigger: first time the user sees a genuinely profitable verdict
+  // Review trigger: first time the user sees a genuinely profitable verdict.
+  // Guarded against firing during onboarding/first launch (Apple 5.6.3): requires
+  // a return visit (2nd+ app session) and excludes the auto-seeded sample dashboard,
+  // since that would otherwise fire on fabricated demo data before real engagement.
   useEffect(() => {
     if (hasSeenPositiveVerdict) return;
+    if (totalDashboardSessions < 2) return;
+    if (currentDashboard?.id?.startsWith('sample-')) return;
     if (totalInitialInvestment > 0 && roiPercentage >= 25 && breakEvenMonths > 0 && breakEvenMonths <= 24) {
       markPositiveVerdictSeen();
       maybeRequestReview();
     }
-  }, [hasSeenPositiveVerdict, totalInitialInvestment, roiPercentage, breakEvenMonths]);
+  }, [hasSeenPositiveVerdict, totalDashboardSessions, currentDashboard?.id, totalInitialInvestment, roiPercentage, breakEvenMonths]);
 
   const getBreakEvenMessage = (months: number) => {
   if (months === 0 || months > 100) return 'Not profitable';
